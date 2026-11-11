@@ -1,0 +1,105 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ / Android Studio related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Local Assistants & Configs
+.agents/
+.codex/
+.aws/
+.gemini/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+/build/
+**/build/
+/coverage/
+
+# Symbolication & Obfuscation related
+app.*.symbols
+app.*.map.json
+
+# Android related
+**/android/local.properties
+android/local.properties
+.gradle/
+**/.gradle/
+.kotlin/
+**/.kotlin/
+/android/app/debug
+/android/app/profile
+/android/app/release
+captures/
+
+# Security, Keys & Signing (NEVER commit to git)
+*.keystore
+*.jks
+key.properties
+*.key
+*.pem
+*.p12
+.env
+.env.*
+
+# Generated Executables & Packages (GitHub has 100MB limit)
+*.apk
+*.aab
+*.exe
+*.app
+*.dmg
+*.deb
+*.rpm
+
+# SQLite & Local database artifacts
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+alugplus_data/
+**/alugplus_data/
+
+# iOS / macOS related
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/macos/Pods/
+**/macos/Flutter/ephemeral/
+xcuserdata/
+DerivedData/
+
+# Linux / Windows Ephemeral
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/
+
+# Widget Preview related
+.widget_preview/

@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" width="100%" height="100%">
+  <defs>
+    <filter id="cardShadow" x="-8%" y="-8%" width="116%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+    <linearGradient id="headerBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D47A1"/>
+      <stop offset="100%" stop-color="#1565C0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Canvas Dark Background -->
+  <rect width="1200" height="540" rx="20" fill="#0B1120"/>
+
+  <!-- SCREEN 1: Painel & Cronômetros -->
+  <g transform="translate(30, 30)" filter="url(#cardShadow)">
+    <rect width="360" height="480" rx="20" fill="#0F172A" stroke="#1E293B" stroke-width="2"/>
+    <!-- AppBar -->
+    <rect x="0" y="0" width="360" height="56" rx="20" fill="#1E293B"/>
+    <rect x="16" y="13" width="30" height="30" rx="9" fill="url(#headerBlue)" stroke="#FFFFFF" stroke-width="1.5"/>
+    <path d="M 33 18 L 25 30 L 31 30 L 29 38 L 37 26 L 31 26 Z" fill="#FFFFFF"/>
+    <text x="56" y="34" font-family="sans-serif" font-size="16" font-weight="800" fill="#FFFFFF">AlugPlus+</text>
+    <rect x="148" y="19" width="58" height="20" rx="10" fill="#334155"/>
+    <text x="177" y="33" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="600" fill="#E2E8F0">Painel</text>
+
+    <!-- Banner -->
+    <rect x="16" y="72" width="328" height="68" rx="14" fill="url(#headerBlue)"/>
+    <text x="32" y="100" font-family="sans-serif" font-size="15" font-weight="800" fill="#FFFFFF">Painel Operacional AlugPlus+</text>
+    <text x="32" y="122" font-family="sans-serif" font-size="11" fill="#BBDEFB">Monitoramento em tempo real • Cronômetros ativos</text>
+
+    <!-- KPI Row -->
+    <rect x="16" y="152" width="102" height="64" rx="12" fill="#1E293B"/>
+    <text x="28" y="172" font-family="sans-serif" font-size="10" fill="#94A3B8">Disponíveis</text>
+    <text x="28" y="200" font-family="sans-serif" font-size="22" font-weight="900" fill="#43A047">4</text>
+
+    <rect x="129" y="152" width="102" height="64" rx="12" fill="#1E293B"/>
+    <text x="141" y="172" font-family="sans-serif" font-size="10" fill="#94A3B8">Alugados</text>
+    <text x="141" y="200" font-family="sans-serif" font-size="22" font-weight="900" fill="#42A5F5">2</text>
+
+    <rect x="242" y="152" width="102" height="64" rx="12" fill="#1E293B"/>
+    <text x="254" y="172" font-family="sans-serif" font-size="10" fill="#94A3B8">Caixa do Dia</text>
+    <text x="254" y="198" font-family="sans-serif" font-size="16" font-weight="900" fill="#64B5F6">R$ 185,00</text>
+
+    <!-- Active Rental Card 1 (On Time) -->
+    <rect x="16" y="232" width="328" height="96" rx="14" fill="#1E293B" stroke="#1E88E5" stroke-width="2"/>
+    <rect x="28" y="246" width="42" height="42" rx="12" fill="#1E88E5"/>
+    <text x="49" y="273" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#FFFFFF">🚲</text>
+    <text x="80" y="262" font-family="sans-serif" font-size="14" font-weight="800" fill="#FFFFFF">Bike Aro 29 Sport #01</text>
+    <rect x="246" y="246" width="84" height="22" rx="11" fill="#1E88E5" fill-opacity="0.2"/>
+    <text x="288" y="261" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="800" fill="#64B5F6">Restam 12:40</text>
+    <text x="80" y="282" font-family="sans-serif" font-size="11" fill="#94A3B8">Início: 18:00 • Previsto: 18:30 • R$ 15,00</text>
+    <!-- Progress Bar 58% -->
+    <rect x="28" y="302" width="266" height="8" rx="4" fill="#334155"/>
+    <rect x="28" y="302" width="154" height="8" rx="4" fill="#1E88E5"/>
+    <text x="306" y="310" font-family="sans-serif" font-size="11" font-weight="800" fill="#64B5F6">58%</text>
+
+    <!-- Active Rental Card 2 (Overdue 100%) -->
+    <rect x="16" y="340" width="328" height="114" rx="14" fill="#1E293B" stroke="#E53935" stroke-width="2"/>
+    <rect x="28" y="354" width="42" height="42" rx="12" fill="#E53935"/>
+    <text x="49" y="381" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#FFFFFF">🛺</text>
+    <text x="80" y="370" font-family="sans-serif" font-size="14" font-weight="800" fill="#FFFFFF">Carrinho Família #01</text>
+    <rect x="234" y="354" width="96" height="22" rx="11" fill="#E53935" fill-opacity="0.22"/>
+    <text x="282" y="369" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="800" fill="#EF5350">Expirado 05:12</text>
+    <text x="80" y="390" font-family="sans-serif" font-size="11" fill="#94A3B8">Início: 17:30 • Previsto: 18:00 • R$ 25,00</text>
+    <!-- Progress Bar Locked at 100% -->
+    <rect x="28" y="408" width="266" height="8" rx="4" fill="#E53935"/>
+    <text x="302" y="416" font-family="sans-serif" font-size="11" font-weight="800" fill="#EF5350">100%</text>
+    <rect x="28" y="424" width="302" height="20" rx="6" fill="#E53935" fill-opacity="0.15"/>
+    <text x="36" y="438" font-family="sans-serif" font-size="10" font-weight="700" fill="#EF5350">⚠️ Acréscimo de atraso: R$ 2,00 (4º min+ ativo)</text>
+  </g>
+
+  <!-- SCREEN 2: Detalhes do Aluguel & Edição Didática de Tempo -->
+  <g transform="translate(420, 30)" filter="url(#cardShadow)">
+    <rect width="360" height="480" rx="20" fill="#0F172A" stroke="#1E293B" stroke-width="2"/>
+    <rect x="155" y="12" width="50" height="5" rx="2.5" fill="#475569"/>
+    <text x="24" y="46" font-family="sans-serif" font-size="17" font-weight="800" fill="#FFFFFF">Detalhes &amp; Ajuste de Tempo</text>
+    <text x="24" y="64" font-family="sans-serif" font-size="11" fill="#94A3B8">Bike Aro 29 Sport #01 • Categoria: Bike</text>
+
+    <!-- Value & Surcharge Box -->
+    <rect x="20" y="80" width="320" height="106" rx="14" fill="#1E293B" stroke="#F57C00" stroke-width="1.5"/>
+    <text x="34" y="102" font-family="sans-serif" font-size="11" fill="#94A3B8">Valor Base</text>
+    <text x="34" y="122" font-family="sans-serif" font-size="17" font-weight="800" fill="#FFFFFF">R$ 15,00</text>
+    <text x="240" y="102" font-family="sans-serif" font-size="11" fill="#94A3B8">Total a Pagar</text>
+    <text x="240" y="122" font-family="sans-serif" font-size="19" font-weight="900" fill="#42A5F5">R$ 17,00</text>
+    <rect x="34" y="138" width="135" height="34" rx="8" fill="#0F172A" stroke="#334155"/>
+    <text x="46" y="159" font-family="sans-serif" font-size="12" fill="#E2E8F0">Acréscimo: 2,00</text>
+    <rect x="178" y="138" width="148" height="34" rx="8" fill="#2E7D32"/>
+    <text x="252" y="159" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">✓ Acréscimo Somado</text>
+
+    <!-- Calculator Time Box -->
+    <rect x="20" y="200" width="320" height="150" rx="14" fill="#1E293B" stroke="#1565C0" stroke-width="1.5"/>
+    <text x="34" y="224" font-family="sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">Editar Tempo (+ / - / Cálculos)</text>
+    <rect x="266" y="209" width="60" height="22" rx="6" fill="#1565C0" fill-opacity="0.3"/>
+    <text x="296" y="224" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" fill="#64B5F6">+35 min</text>
+
+    <rect x="34" y="238" width="200" height="40" rx="10" fill="#0F172A" stroke="#42A5F5" stroke-width="1.5"/>
+    <text x="48" y="263" font-family="monospace" font-size="14" font-weight="700" fill="#FFFFFF">10+20+5</text>
+
+    <rect x="244" y="238" width="82" height="40" rx="10" fill="#1565C0"/>
+    <text x="285" y="263" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">Aplicar</text>
+
+    <!-- Quick Chips -->
+    <rect x="34" y="290" width="62" height="24" rx="12" fill="#0F172A" stroke="#334155"/>
+    <text x="65" y="306" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="700" fill="#64B5F6">+10 min</text>
+    <rect x="104" y="290" width="62" height="24" rx="12" fill="#0F172A" stroke="#334155"/>
+    <text x="135" y="306" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="700" fill="#64B5F6">+15 min</text>
+    <rect x="174" y="290" width="60" height="24" rx="12" fill="#0F172A" stroke="#334155"/>
+    <text x="204" y="306" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="700" fill="#EF5350">-5 min</text>
+    <rect x="242" y="290" width="64" height="24" rx="12" fill="#0F172A" stroke="#334155"/>
+    <text x="274" y="306" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="700" fill="#EF5350">-10 min</text>
+
+    <!-- Action Buttons -->
+    <rect x="20" y="366" width="154" height="36" rx="10" fill="#1E293B" stroke="#475569"/>
+    <text x="97" y="389" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#E2E8F0">⇄ Alterar Item</text>
+    <rect x="186" y="366" width="154" height="36" rx="10" fill="#1E293B" stroke="#475569"/>
+    <text x="263" y="389" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#E2E8F0">$ Alterar Valor</text>
+
+    <rect x="20" y="416" width="320" height="46" rx="12" fill="#2E7D32"/>
+    <text x="180" y="444" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="800" fill="#FFFFFF">✓ Finalizar Aluguel (R$ 17,00)</text>
+  </g>
+
+  <!-- SCREEN 3: Financeiro & Catálogo 30 Cores -->
+  <g transform="translate(810, 30)" filter="url(#cardShadow)">
+    <rect width="360" height="480" rx="20" fill="#0F172A" stroke="#1E293B" stroke-width="2"/>
+    <text x="24" y="42" font-family="sans-serif" font-size="17" font-weight="800" fill="#FFFFFF">Gestão Financeira &amp; Gráficos</text>
+    <text x="24" y="60" font-family="sans-serif" font-size="11" fill="#94A3B8">Aluguéis por Faixa Horária (fl_chart)</text>
+
+    <!-- Bar Chart Card -->
+    <rect x="20" y="76" width="320" height="175" rx="14" fill="#1E293B"/>
+    <!-- Bars -->
+    <rect x="48" y="175" width="26" height="45" rx="6" fill="#1565C0"/>
+    <text x="61" y="236" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8">17-18h</text>
+
+    <rect x="108" y="135" width="26" height="85" rx="6" fill="#1E88E5"/>
+    <text x="121" y="236" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8">18-19h</text>
+
+    <rect x="168" y="105" width="26" height="115" rx="6" fill="#42A5F5"/>
+    <text x="181" y="236" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8">19-20h</text>
+
+    <rect x="228" y="125" width="26" height="95" rx="6" fill="#1E88E5"/>
+    <text x="241" y="236" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8">20-21h</text>
+
+    <rect x="288" y="160" width="26" height="60" rx="6" fill="#1565C0"/>
+    <text x="301" y="236" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94A3B8">21-22h</text>
+
+    <!-- Color Palette Preview Card -->
+    <rect x="20" y="268" width="320" height="192" rx="14" fill="#1E293B"/>
+    <text x="36" y="294" font-family="sans-serif" font-size="13" font-weight="800" fill="#FFFFFF">Catálogo • Seletor Visual de 30 Cores</text>
+    <text x="36" y="312" font-family="sans-serif" font-size="11" fill="#94A3B8">Identificação imediata na borda e barra do item</text>
+
+    <!-- 3 rows of 10 color swatches -->
+    <g transform="translate(36, 328)">
+      <!-- Row 1 -->
+      <rect x="0" y="0" width="22" height="22" rx="6" fill="#E53935"/><rect x="29" y="0" width="22" height="22" rx="6" fill="#D81B60"/><rect x="58" y="0" width="22" height="22" rx="6" fill="#8E24AA"/><rect x="87" y="0" width="22" height="22" rx="6" fill="#5E35B1"/><rect x="116" y="0" width="22" height="22" rx="6" fill="#3949AB"/><rect x="145" y="0" width="22" height="22" rx="6" fill="#1E88E5"/><rect x="174" y="0" width="22" height="22" rx="6" fill="#039BE5"/><rect x="203" y="0" width="22" height="22" rx="6" fill="#00ACC1"/><rect x="232" y="0" width="22" height="22" rx="6" fill="#00897B"/><rect x="261" y="0" width="22" height="22" rx="6" fill="#43A047"/>
+      <!-- Row 2 -->
+      <rect x="0" y="30" width="22" height="22" rx="6" fill="#7CB342"/><rect x="29" y="30" width="22" height="22" rx="6" fill="#C0CA33"/><rect x="58" y="30" width="22" height="22" rx="6" fill="#FDD835"/><rect x="87" y="30" width="22" height="22" rx="6" fill="#FFB300"/><rect x="116" y="30" width="22" height="22" rx="6" fill="#FB8C00"/><rect x="145" y="30" width="22" height="22" rx="6" fill="#F4511E"/><rect x="174" y="30" width="22" height="22" rx="6" fill="#6D4C41"/><rect x="203" y="30" width="22" height="22" rx="6" fill="#757575"/><rect x="232" y="30" width="22" height="22" rx="6" fill="#546E7A"/><rect x="261" y="30" width="22" height="22" rx="6" fill="#B71C1C"/>
+      <!-- Row 3 -->
+      <rect x="0" y="60" width="22" height="22" rx="6" fill="#880E4F"/><rect x="29" y="60" width="22" height="22" rx="6" fill="#4A148C"/><rect x="58" y="60" width="22" height="22" rx="6" fill="#311B92"/><rect x="87" y="60" width="22" height="22" rx="6" fill="#0D47A1"/><rect x="116" y="60" width="22" height="22" rx="6" fill="#006064"/><rect x="145" y="60" width="22" height="22" rx="6" fill="#1B5E20"/><rect x="174" y="60" width="22" height="22" rx="6" fill="#33691E"/><rect x="203" y="60" width="22" height="22" rx="6" fill="#E65100"/><rect x="232" y="60" width="22" height="22" rx="6" fill="#BF360C"/><rect x="261" y="60" width="22" height="22" rx="6" fill="#263238"/>
+    </g>
+
+    <rect x="36" y="424" width="288" height="24" rx="8" fill="#0D47A1" fill-opacity="0.35"/>
+    <text x="180" y="440" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#90CAF9">🔒 Retenção Automática: Máx. 200 Concluídos</text>
+  </g>
+</svg>
