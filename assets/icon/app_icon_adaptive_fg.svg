@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <filter id="boltShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#051329" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#boltShadow)">
+    <path d="M 570 245 L 350 570 L 512 570 L 454 779 L 674 454 L 512 454 Z"
+          fill="#FFFFFF"
+          stroke="#FFFFFF"
+          stroke-width="32"
+          stroke-linejoin="round"
+          stroke-linecap="round"/>
+  </g>
+</svg>
