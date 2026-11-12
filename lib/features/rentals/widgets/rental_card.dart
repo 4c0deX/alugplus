@@ -1,10 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/item_image_service.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/time_utils.dart';
+import '../../../shared/widgets/item_image_preview_dialog.dart';
 import '../models/rental_model.dart';
 
 class RentalCard extends StatelessWidget {
@@ -51,6 +51,7 @@ class RentalCard extends StatelessWidget {
               Row(
                 children: [
                   RentalItemAvatar(
+                    itemName: rental.itemName,
                     photoPath: rental.itemPhotoPath,
                     colorHex: rental.itemColorHex,
                     itemType: rental.itemType,
@@ -241,21 +242,26 @@ class _TimeBadge extends StatelessWidget {
 }
 
 class RentalItemAvatar extends StatelessWidget {
+  final String itemName;
   final String? photoPath;
   final String colorHex;
   final String itemType;
   final double size;
+  final bool enablePreviewOnTap;
 
   const RentalItemAvatar({
     super.key,
+    this.itemName = 'Equipamento',
     required this.photoPath,
     required this.colorHex,
     required this.itemType,
     this.size = 48,
+    this.enablePreviewOnTap = true,
   });
 
   IconData _iconForType(String type) {
     switch (type) {
+      case 'Bicicleta':
       case 'Bike':
         return Icons.directions_bike_rounded;
       case 'Carrinho':
@@ -265,8 +271,7 @@ class RentalItemAvatar extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildContent() {
     final color = AppColors.fromHex(colorHex);
     final fallback = Container(
       width: size,
@@ -296,25 +301,84 @@ class RentalItemAvatar extends StatelessWidget {
           width: size,
           height: size,
           fit: BoxFit.cover,
+          gaplessPlayback: true,
+          cacheWidth: (size * 3).round(),
           errorBuilder: (_, _, _) => fallback,
         ),
       );
     }
 
-    final file = File(clean);
-    if (file.existsSync()) {
+    final bytes = ItemImageService.instance.getBytesSync(clean);
+    if (bytes != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(14),
-        child: Image.file(
-          file,
+        child: Image.memory(
+          bytes,
           width: size,
           height: size,
           fit: BoxFit.cover,
+          gaplessPlayback: true,
           errorBuilder: (_, _, _) => fallback,
         ),
       );
     }
 
     return fallback;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final content = _buildContent();
+    if (!enablePreviewOnTap) {
+      return content;
+    }
+
+    final hasPhoto = photoPath != null && photoPath!.trim().isNotEmpty;
+
+    return Tooltip(
+      message: 'Toque para ampliar imagem de $itemName',
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          ItemImagePreviewDialog.show(
+            context,
+            itemName: itemName,
+            itemType: itemType,
+            colorHex: colorHex,
+            photoPath: photoPath,
+          );
+        },
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            content,
+            if (hasPhoto)
+              Positioned(
+                right: -3,
+                bottom: -3,
+                child: Container(
+                  padding: const EdgeInsets.all(2.5),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryDark,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 3,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.zoom_in_rounded,
+                    size: (size * 0.24).clamp(10.0, 14.0),
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }

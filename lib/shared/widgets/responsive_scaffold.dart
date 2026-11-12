@@ -44,10 +44,9 @@ class ResponsiveScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(navigationTabProvider);
-    final activeRentalsCount = ref
-        .watch(rentalControllerProvider)
-        .activeRentals
-        .length;
+    final activeRentalsCount = ref.watch(
+      rentalControllerProvider.select((s) => s.activeRentals.length),
+    );
 
     return LayoutBuilder(
       builder: (context, constraints) {

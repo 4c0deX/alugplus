@@ -103,3 +103,6 @@ DerivedData/
 
 # Widget Preview related
 .widget_preview/
+
+# Audit Reports & Reviews
+AUDIT_REPORT.md

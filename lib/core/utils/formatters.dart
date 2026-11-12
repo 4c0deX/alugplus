@@ -19,13 +19,32 @@ class AppFormatters {
     return _currencyFormat.format(value);
   }
 
-  /// Converte texto digitado pelo usuário para double (suporta vírgula ou ponto)
+  /// Converte texto digitado pelo usuário para double (suporta vírgula, ponto e separador de milhar)
   static double parseCurrency(String input, {double fallback = 0.0}) {
-    final cleaned = input
-        .replaceAll('R\$', '')
-        .replaceAll(' ', '')
-        .replaceAll(',', '.')
-        .trim();
+    var cleaned = input.replaceAll('R\$', '').replaceAll(' ', '').trim();
+    if (cleaned.isEmpty) return fallback;
+
+    final lastComma = cleaned.lastIndexOf(',');
+    final lastDot = cleaned.lastIndexOf('.');
+
+    if (lastComma != -1 && lastDot != -1) {
+      if (lastComma > lastDot) {
+        // Formato brasileiro: "1.250,50" -> remove ponto de milhar e troca vírgula decimal
+        cleaned = cleaned.replaceAll('.', '').replaceAll(',', '.');
+      } else {
+        // Formato internacional: "1,250.50" -> remove vírgula de milhar
+        cleaned = cleaned.replaceAll(',', '');
+      }
+    } else if (lastComma != -1) {
+      // Vírgula decimal sem milhar: "25,50" -> "25.50"
+      cleaned = cleaned.replaceAll(',', '.');
+    } else if (lastDot != -1) {
+      // Múltiplos pontos sem vírgula: "1.000.000" -> "1000000"
+      final dotCount = '.'.allMatches(cleaned).length;
+      if (dotCount > 1) {
+        cleaned = cleaned.replaceAll('.', '');
+      }
+    }
     return double.tryParse(cleaned) ?? fallback;
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/database/database_helper.dart';
+import '../../../core/services/item_image_service.dart';
 import '../models/item_model.dart';
 
 enum CatalogFilter {
@@ -66,7 +67,30 @@ class CatalogController extends Notifier<CatalogState> {
         'items',
         orderBy: 'is_active DESC, name ASC',
       );
-      final items = rows.map(ItemModel.fromMap).toList(growable: false);
+      final rawItems = rows.map(ItemModel.fromMap).toList(growable: false);
+      final items = <ItemModel>[];
+
+      for (final item in rawItems) {
+        if (item.hasPhoto && !item.isNetworkPhoto) {
+          final storedPath = await ItemImageService.instance
+              .saveImageToAppStorage(item.photoPath!);
+          if (storedPath != item.photoPath && item.id != null) {
+            await db.update(
+              'items',
+              {'photo_path': storedPath},
+              where: 'id = ?',
+              whereArgs: [item.id],
+            );
+            items.add(item.copyWith(photoPath: storedPath));
+          } else {
+            await ItemImageService.instance.preloadFileIntoMemory(storedPath);
+            items.add(item);
+          }
+        } else {
+          items.add(item);
+        }
+      }
+
       state = state.copyWith(items: items, isLoading: false);
     } catch (e) {
       state = state.copyWith(
@@ -82,9 +106,16 @@ class CatalogController extends Notifier<CatalogState> {
 
   Future<void> addItem(ItemModel item) async {
     try {
+      var preparedItem = item;
+      if (item.hasPhoto && !item.isNetworkPhoto) {
+        final permanentPath = await ItemImageService.instance
+            .saveImageToAppStorage(item.photoPath!);
+        preparedItem = item.copyWith(photoPath: permanentPath);
+      }
+
       final db = await _dbHelper.database;
       await db.transaction((txn) async {
-        await txn.insert('items', item.toMap());
+        await txn.insert('items', preparedItem.toMap());
       });
       await loadItems();
     } catch (e) {
@@ -95,13 +126,20 @@ class CatalogController extends Notifier<CatalogState> {
   Future<void> updateItem(ItemModel item) async {
     if (item.id == null) return;
     try {
+      var preparedItem = item;
+      if (item.hasPhoto && !item.isNetworkPhoto) {
+        final permanentPath = await ItemImageService.instance
+            .saveImageToAppStorage(item.photoPath!);
+        preparedItem = item.copyWith(photoPath: permanentPath);
+      }
+
       final db = await _dbHelper.database;
       await db.transaction((txn) async {
         await txn.update(
           'items',
-          item.toMap(),
+          preparedItem.toMap(),
           where: 'id = ?',
-          whereArgs: [item.id],
+          whereArgs: [preparedItem.id],
         );
       });
       await loadItems();
@@ -116,14 +154,45 @@ class CatalogController extends Notifier<CatalogState> {
   }
 
   Future<void> deleteItem(int itemId) async {
+    state = state.copyWith(clearError: true);
     try {
       final db = await _dbHelper.database;
-      await db.transaction((txn) async {
-        await txn.delete(
-          'items',
-          where: 'id = ?',
-          whereArgs: [itemId],
+      final activeRentals = await db.query(
+        'rentals',
+        where: "item_id = ? AND status = 'active'",
+        whereArgs: [itemId],
+        limit: 1,
+      );
+      if (activeRentals.isNotEmpty) {
+        state = state.copyWith(
+          errorMessage:
+              'Não é possível excluir um equipamento com aluguel em andamento.',
         );
+        return;
+      }
+
+      final pastRentals = await db.query(
+        'rentals',
+        where: 'item_id = ?',
+        whereArgs: [itemId],
+        limit: 1,
+      );
+
+      await db.transaction((txn) async {
+        if (pastRentals.isNotEmpty) {
+          await txn.update(
+            'items',
+            {'is_active': 0},
+            where: 'id = ?',
+            whereArgs: [itemId],
+          );
+        } else {
+          await txn.delete(
+            'items',
+            where: 'id = ?',
+            whereArgs: [itemId],
+          );
+        }
       });
       await loadItems();
     } catch (e) {

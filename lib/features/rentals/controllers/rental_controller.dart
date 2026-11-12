@@ -100,7 +100,6 @@ class RentalController extends Notifier<RentalsState> {
 
   void _onTick(DateTime now) {
     if (state.activeRentals.isEmpty) {
-      state = state.copyWith(currentTime: now);
       return;
     }
 
@@ -137,6 +136,7 @@ class RentalController extends Notifier<RentalsState> {
 
       // Recalcula o acréscimo automático caso o operador não tenha fixado valor manual
       if (rentalId != null &&
+          !rental.isManualSurcharge &&
           !state.manuallyEditedSurchargeIds.contains(rentalId)) {
         final autoSurcharge = rental.autoSurchargeAt(now);
         if ((autoSurcharge - rental.surcharge).abs() > 0.001) {
@@ -203,6 +203,7 @@ class RentalController extends Notifier<RentalsState> {
           _notifiedSurchargeIds.add(model.id!);
         }
         if (model.id != null &&
+            !model.isManualSurcharge &&
             !state.manuallyEditedSurchargeIds.contains(model.id)) {
           final autoSurcharge = model.autoSurchargeAt(now);
           final total = model.surchargeApplied
@@ -237,13 +238,31 @@ class RentalController extends Notifier<RentalsState> {
   Future<void> createBatchRentals(List<BatchRentalRequestItem> batchItems) async {
     if (batchItems.isEmpty) return;
 
+    state = state.copyWith(clearError: true);
     try {
       final db = await _dbHelper.database;
       final now = DateTime.now();
       final createdDate = AppFormatters.sqlDate(now);
 
       await db.transaction((txn) async {
+        final seenInBatch = <int>{};
         for (final req in batchItems) {
+          if (!seenInBatch.add(req.itemId)) {
+            throw StateError(
+              'Equipamento duplicado no mesmo lote (ID ${req.itemId}).',
+            );
+          }
+          final activeCheck = await txn.query(
+            'rentals',
+            where: "item_id = ? AND status = 'active'",
+            whereArgs: [req.itemId],
+            limit: 1,
+          );
+          if (activeCheck.isNotEmpty) {
+            throw StateError(
+              'O equipamento ID ${req.itemId} já está em um aluguel ativo.',
+            );
+          }
           final plannedEnd = now.add(Duration(minutes: req.durationMinutes));
           await txn.insert('rentals', {
             'item_id': req.itemId,
@@ -253,13 +272,12 @@ class RentalController extends Notifier<RentalsState> {
             'base_price': req.basePrice,
             'surcharge': 0.0,
             'surcharge_applied': 0,
+            'is_manual_surcharge': 0,
             'total_paid': req.basePrice,
             'status': 'active',
             'created_date': createdDate,
           });
         }
-        // Verifica retenção de 200 concluídos na criação também conforme especificação
-        await _dbHelper.enforceRetentionLimitTxn(txn);
       });
 
       await loadRentals();
@@ -316,6 +334,7 @@ class RentalController extends Notifier<RentalsState> {
           {
             'planned_end_time': newPlannedEnd.toIso8601String(),
             'surcharge': newAutoSurcharge,
+            'is_manual_surcharge': 0,
             'total_paid': newTotalPaid,
           },
           where: 'id = ?',
@@ -335,9 +354,21 @@ class RentalController extends Notifier<RentalsState> {
 
   /// Altera o equipamento vinculado a um aluguel ativo
   Future<void> changeRentalItem(int rentalId, int newItemId) async {
+    state = state.copyWith(clearError: true);
     try {
       final db = await _dbHelper.database;
       await db.transaction((txn) async {
+        final busyCheck = await txn.query(
+          'rentals',
+          where: "item_id = ? AND status = 'active' AND id != ?",
+          whereArgs: [newItemId, rentalId],
+          limit: 1,
+        );
+        if (busyCheck.isNotEmpty) {
+          throw StateError(
+            'O equipamento selecionado já está ocupado por outro aluguel ativo.',
+          );
+        }
         await txn.update(
           'rentals',
           {'item_id': newItemId},
@@ -411,6 +442,7 @@ class RentalController extends Notifier<RentalsState> {
           {
             'surcharge': sanitizedSurcharge,
             'surcharge_applied': shouldApply ? 1 : 0,
+            'is_manual_surcharge': 1,
             'total_paid': newTotalPaid,
           },
           where: 'id = ?',
@@ -529,6 +561,105 @@ class RentalController extends Notifier<RentalsState> {
       await ref.read(financialControllerProvider.notifier).loadFinancialStats();
     } catch (e) {
       state = state.copyWith(errorMessage: 'Erro ao finalizar aluguel: $e');
+    }
+  }
+
+  /// Apaga um aluguel específico do Histórico e remove completamente o seu valor
+  /// e contagem da área financeira (daily_financial_stats), sem deixar rastro.
+  Future<void> deleteCompletedRentalWithFinancialTrace(
+    RentalModel rental,
+  ) async {
+    if (rental.id == null) return;
+    final primaryDateKey = rental.actualEndTime != null
+        ? AppFormatters.sqlDate(rental.actualEndTime!)
+        : (rental.createdDate.isNotEmpty
+              ? rental.createdDate
+              : _dbHelper.todayDateKey);
+    final fallbackDateKey = rental.createdDate.isNotEmpty
+        ? rental.createdDate
+        : _dbHelper.todayDateKey;
+
+    try {
+      final db = await _dbHelper.database;
+      await db.transaction((txn) async {
+        await txn.delete(
+          'rentals',
+          where: 'id = ?',
+          whereArgs: [rental.id],
+        );
+
+        await _dbHelper.revertRentalFromFinancialStatsTxn(
+          txn: txn,
+          primaryDateKey: primaryDateKey,
+          fallbackDateKey: fallbackDateKey,
+          rentalStartTime: rental.startTime,
+          rentalCompletedAt: rental.actualEndTime ?? rental.plannedEndTime,
+          amountPaid: rental.totalPaid,
+          itemCategory: rental.itemType,
+          itemName: rental.itemName,
+        );
+      });
+
+      await loadRentals();
+      await ref.read(financialControllerProvider.notifier).loadFinancialStats();
+    } catch (e) {
+      state = state.copyWith(
+        errorMessage: 'Erro ao apagar aluguel do histórico: $e',
+      );
+    }
+  }
+
+  /// Modifica o valor pago de um aluguel recente no Histórico e atualiza
+  /// proporcionalmente a área financeira (daily_financial_stats).
+  Future<void> updateCompletedRentalPrice(
+    RentalModel rental,
+    double newTotalPaid,
+  ) async {
+    if (rental.id == null) return;
+    final sanitizedNewTotal = newTotalPaid < 0 ? 0.0 : newTotalPaid;
+    final oldTotal = rental.totalPaid;
+    final newBasePrice = rental.surchargeApplied
+        ? (sanitizedNewTotal - rental.surcharge).clamp(0.0, double.infinity)
+        : sanitizedNewTotal;
+
+    final primaryDateKey = rental.actualEndTime != null
+        ? AppFormatters.sqlDate(rental.actualEndTime!)
+        : (rental.createdDate.isNotEmpty
+              ? rental.createdDate
+              : _dbHelper.todayDateKey);
+    final fallbackDateKey = rental.createdDate.isNotEmpty
+        ? rental.createdDate
+        : _dbHelper.todayDateKey;
+
+    try {
+      final db = await _dbHelper.database;
+      await db.transaction((txn) async {
+        await txn.update(
+          'rentals',
+          {
+            'base_price': newBasePrice,
+            'total_paid': sanitizedNewTotal,
+          },
+          where: 'id = ?',
+          whereArgs: [rental.id],
+        );
+
+        await _dbHelper.adjustRentalRevenueInFinancialStatsTxn(
+          txn: txn,
+          primaryDateKey: primaryDateKey,
+          fallbackDateKey: fallbackDateKey,
+          rentalStartTime: rental.startTime,
+          oldAmountPaid: oldTotal,
+          newAmountPaid: sanitizedNewTotal,
+        );
+      });
+
+      await loadRentals();
+      await ref.read(financialControllerProvider.notifier).loadFinancialStats();
+    } catch (e) {
+      state = state.copyWith(
+        errorMessage: 'Erro ao atualizar valor do aluguel: $e',
+      );
     }
   }
 

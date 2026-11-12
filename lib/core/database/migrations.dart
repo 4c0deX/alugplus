@@ -2,7 +2,7 @@ class DatabaseMigrations {
   DatabaseMigrations._();
 
   static const String databaseName = 'alugplus.db';
-  static const int databaseVersion = 1;
+  static const int databaseVersion = 2;
 
   static const String createItemsTable = '''
     CREATE TABLE items (
@@ -25,10 +25,11 @@ class DatabaseMigrations {
       base_price REAL NOT NULL,
       surcharge REAL DEFAULT 0.0,
       surcharge_applied INTEGER DEFAULT 0,
+      is_manual_surcharge INTEGER DEFAULT 0,
       total_paid REAL NOT NULL,
       status TEXT NOT NULL,
       created_date TEXT NOT NULL,
-      FOREIGN KEY (item_id) REFERENCES items (id) ON DELETE CASCADE
+      FOREIGN KEY (item_id) REFERENCES items (id) ON DELETE RESTRICT
     );
   ''';
 
@@ -43,9 +44,10 @@ class DatabaseMigrations {
   ''';
 
   static const String createIndexes = '''
-    CREATE INDEX idx_rentals_status ON rentals(status);
-    CREATE INDEX idx_rentals_start_time ON rentals(start_time);
-    CREATE INDEX idx_rentals_created_date ON rentals(created_date);
+    CREATE INDEX IF NOT EXISTS idx_rentals_status ON rentals(status);
+    CREATE INDEX IF NOT EXISTS idx_rentals_start_time ON rentals(start_time);
+    CREATE INDEX IF NOT EXISTS idx_rentals_created_date ON rentals(created_date);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_rentals_unique_active_item ON rentals(item_id) WHERE status = 'active';
   ''';
 
   /// Trigger complementar de segurança no SQLite para manter no máximo 200 aluguéis 'completed'

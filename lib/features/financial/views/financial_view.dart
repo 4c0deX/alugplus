@@ -554,7 +554,11 @@ class _HourlyBarChartCard extends StatelessWidget {
                     touchTooltipData: BarTouchTooltipData(
                       getTooltipColor: (_) => AppColors.primaryDark,
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                        final item = displayMetrics[group.x];
+                        final idx = group.x.toInt();
+                        if (idx < 0 || idx >= displayMetrics.length) {
+                          return null;
+                        }
+                        final item = displayMetrics[idx];
                         return BarTooltipItem(
                           '${item.slot}h\n',
                           const TextStyle(
@@ -669,6 +673,7 @@ class _CategoryAndItemRankingCard extends StatelessWidget {
 
   Color _categoryColor(String category) {
     switch (category) {
+      case 'Bicicleta':
       case 'Bike':
         return AppColors.primary;
       case 'Carrinho':

@@ -1,11 +1,12 @@
 class TimeUtils {
   TimeUtils._();
 
-  /// Tolerância em minutos após o horário previsto antes de cobrar acréscimo.
-  static const int toleranceMinutes = 3;
+  /// Minuto exato de atraso em que se inicia a cobrança de acréscimo (configurável, padrão: 4).
+  static int surchargeTriggerMinute = 4;
 
-  /// Minuto exato de atraso em que se inicia a cobrança de acréscimo.
-  static const int surchargeTriggerMinute = 4;
+  /// Tolerância em minutos após o horário previsto antes de cobrar acréscimo.
+  static int get toleranceMinutes =>
+      (surchargeTriggerMinute - 1) < 0 ? 0 : (surchargeTriggerMinute - 1);
 
   /// Calcula o progresso do aluguel:
   /// progresso = (tempo_atual - start_time) / (planned_end_time - start_time)
@@ -22,8 +23,7 @@ class TimeUtils {
     final elapsedMilliseconds =
         currentTime.difference(startTime).inMilliseconds;
     final rawProgress = elapsedMilliseconds / totalMilliseconds;
-    if (rawProgress < 0.0) return 0.0;
-    return rawProgress;
+    return rawProgress.clamp(0.0, 1.0);
   }
 
   /// Indica se o tempo atual já atingiu ou ultrapassou o término previsto.
@@ -45,34 +45,40 @@ class TimeUtils {
     return currentTime.difference(plannedEndTime).inMinutes;
   }
 
-  /// Verifica se o aluguel atingiu o 4º minuto de atraso (início do acréscimo).
+  /// Verifica se o aluguel atingiu o minuto configurado de atraso (início do acréscimo).
   static bool hasSurchargeStarted({
     required DateTime plannedEndTime,
     required DateTime currentTime,
+    int? triggerMinute,
   }) {
+    final effectiveTrigger =
+        (triggerMinute ?? surchargeTriggerMinute).clamp(1, 999);
     return overdueMinutes(
           plannedEndTime: plannedEndTime,
           currentTime: currentTime,
         ) >=
-        surchargeTriggerMinute;
+        effectiveTrigger;
   }
 
   /// Lógica de Acréscimo (Surcharge):
-  /// - Tolerância de 3 minutos após o término.
-  /// - A partir do 4º minuto de atraso (tempo_atraso >= 4), calcula-se:
+  /// - Tolerância de (surchargeTriggerMinute - 1) minutos após o término.
+  /// - A partir do minuto configurado de atraso (tempo_atraso >= surchargeTriggerMinute), calcula-se:
   ///   R$ 1,00 + (minutos_completos_adicionais * 1,00).
   static double calculateSurcharge({
     required DateTime plannedEndTime,
     required DateTime currentTime,
+    int? triggerMinute,
   }) {
+    final effectiveTrigger =
+        (triggerMinute ?? surchargeTriggerMinute).clamp(1, 999);
     final delayMins = overdueMinutes(
       plannedEndTime: plannedEndTime,
       currentTime: currentTime,
     );
-    if (delayMins < surchargeTriggerMinute) {
+    if (delayMins < effectiveTrigger) {
       return 0.0;
     }
-    final additionalFullMinutes = delayMins - surchargeTriggerMinute;
+    final additionalFullMinutes = delayMins - effectiveTrigger;
     return 1.00 + (additionalFullMinutes * 1.00);
   }
 
@@ -98,8 +104,8 @@ class TimeUtils {
     required DateTime plannedEndTime,
     required DateTime currentTime,
   }) {
-    final diff = plannedEndTime.difference(currentTime);
-    if (diff.inSeconds > 0) {
+    if (currentTime.isBefore(plannedEndTime)) {
+      final diff = plannedEndTime.difference(currentTime);
       return 'Restam ${formatDurationClock(diff)}';
     } else {
       final overdue = currentTime.difference(plannedEndTime);

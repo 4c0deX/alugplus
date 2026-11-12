@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/utils/time_utils.dart';
+
 @immutable
 class CategoryPreset {
   final String category;
@@ -29,11 +31,13 @@ class CategoryPreset {
 @immutable
 class AppSettingsState {
   final Map<String, CategoryPreset> presets;
+  final int surchargeStartMinute;
   final ThemeMode themeMode;
   final bool isLoaded;
 
   const AppSettingsState({
     required this.presets,
+    this.surchargeStartMinute = 4,
     this.themeMode = ThemeMode.dark,
     this.isLoaded = false,
   });
@@ -57,6 +61,7 @@ class AppSettingsState {
           defaultMinutes: 30,
         ),
       },
+      surchargeStartMinute: 4,
       themeMode: ThemeMode.dark,
       isLoaded: false,
     );
@@ -78,11 +83,13 @@ class AppSettingsState {
 
   AppSettingsState copyWith({
     Map<String, CategoryPreset>? presets,
+    int? surchargeStartMinute,
     ThemeMode? themeMode,
     bool? isLoaded,
   }) {
     return AppSettingsState(
       presets: presets != null ? Map.unmodifiable(presets) : this.presets,
+      surchargeStartMinute: surchargeStartMinute ?? this.surchargeStartMinute,
       themeMode: themeMode ?? this.themeMode,
       isLoaded: isLoaded ?? this.isLoaded,
     );
@@ -118,8 +125,13 @@ class SettingsController extends Notifier<AppSettingsState> {
       }
 
       final isDark = prefs.getBool('app_dark_mode') ?? true;
+      final surchargeMin =
+          (prefs.getInt('surcharge_start_minute') ?? 4).clamp(1, 120);
+      TimeUtils.surchargeTriggerMinute = surchargeMin;
+
       state = state.copyWith(
         presets: current,
+        surchargeStartMinute: surchargeMin,
         themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
         isLoaded: true,
       );
@@ -152,10 +164,21 @@ class SettingsController extends Notifier<AppSettingsState> {
     } catch (_) {}
   }
 
-  Future<void> saveAllPresets(Map<String, CategoryPreset> newPresets) async {
-    state = state.copyWith(presets: newPresets);
+  Future<void> saveAllPresets(
+    Map<String, CategoryPreset> newPresets, {
+    int? surchargeStartMinute,
+  }) async {
+    final sanitizedSurchargeMin =
+        (surchargeStartMinute ?? state.surchargeStartMinute).clamp(1, 120);
+    TimeUtils.surchargeTriggerMinute = sanitizedSurchargeMin;
+
+    state = state.copyWith(
+      presets: newPresets,
+      surchargeStartMinute: sanitizedSurchargeMin,
+    );
     try {
       final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('surcharge_start_minute', sanitizedSurchargeMin);
       for (final entry in newPresets.entries) {
         await prefs.setDouble(
           'preset_price_${entry.key}',
@@ -166,6 +189,16 @@ class SettingsController extends Notifier<AppSettingsState> {
           entry.value.defaultMinutes,
         );
       }
+    } catch (_) {}
+  }
+
+  Future<void> updateSurchargeStartMinute(int minutes) async {
+    final sanitized = minutes.clamp(1, 120);
+    TimeUtils.surchargeTriggerMinute = sanitized;
+    state = state.copyWith(surchargeStartMinute: sanitized);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('surcharge_start_minute', sanitized);
     } catch (_) {}
   }
 

@@ -14,7 +14,7 @@ import 'shared/widgets/responsive_scaffold.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicialização nativa para Desktop (Windows / Linux / macOS)
+  // Inicialização nativa para Desktop (Windows / Linux / macOS)o
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;

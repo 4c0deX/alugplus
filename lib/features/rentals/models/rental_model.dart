@@ -12,6 +12,7 @@ class RentalModel {
   final double basePrice;
   final double surcharge;
   final bool surchargeApplied;
+  final bool isManualSurcharge;
   final double totalPaid;
   final String status; // 'active' | 'completed'
   final String createdDate; // YYYY-MM-DD
@@ -31,6 +32,7 @@ class RentalModel {
     required this.basePrice,
     this.surcharge = 0.0,
     this.surchargeApplied = false,
+    this.isManualSurcharge = false,
     required this.totalPaid,
     required this.status,
     required this.createdDate,
@@ -85,6 +87,7 @@ class RentalModel {
     double? basePrice,
     double? surcharge,
     bool? surchargeApplied,
+    bool? isManualSurcharge,
     double? totalPaid,
     String? status,
     String? createdDate,
@@ -102,6 +105,7 @@ class RentalModel {
       basePrice: basePrice ?? this.basePrice,
       surcharge: surcharge ?? this.surcharge,
       surchargeApplied: surchargeApplied ?? this.surchargeApplied,
+      isManualSurcharge: isManualSurcharge ?? this.isManualSurcharge,
       totalPaid: totalPaid ?? this.totalPaid,
       status: status ?? this.status,
       createdDate: createdDate ?? this.createdDate,
@@ -122,6 +126,7 @@ class RentalModel {
       'base_price': basePrice,
       'surcharge': surcharge,
       'surcharge_applied': surchargeApplied ? 1 : 0,
+      'is_manual_surcharge': isManualSurcharge ? 1 : 0,
       'total_paid': totalPaid,
       'status': status,
       'created_date': createdDate,
@@ -144,11 +149,13 @@ class RentalModel {
       basePrice: (map['base_price'] as num?)?.toDouble() ?? 0.0,
       surcharge: (map['surcharge'] as num?)?.toDouble() ?? 0.0,
       surchargeApplied: ((map['surcharge_applied'] as num?)?.toInt() ?? 0) == 1,
+      isManualSurcharge:
+          ((map['is_manual_surcharge'] as num?)?.toInt() ?? 0) == 1,
       totalPaid: (map['total_paid'] as num?)?.toDouble() ?? 0.0,
       status: (map['status'] as String?) ?? 'active',
       createdDate: (map['created_date'] as String?) ?? '',
       itemName: (map['item_name'] as String?) ?? 'Equipamento',
-      itemType: (map['item_type'] as String?) ?? 'Bike',
+      itemType: (map['item_type'] as String?) ?? 'Bicicleta',
       itemColorHex: (map['item_color_hex'] as String?) ?? '#1565C0',
       itemPhotoPath: map['item_photo_path'] as String?,
     );

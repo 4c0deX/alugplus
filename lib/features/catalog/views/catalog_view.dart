@@ -1,10 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/item_image_service.dart';
+import '../../rentals/widgets/rental_card.dart';
 import '../controllers/catalog_controller.dart';
 import '../models/item_model.dart';
 
@@ -156,6 +156,18 @@ class CatalogView extends ConsumerWidget {
 
     if (confirmed == true && item.id != null) {
       await ref.read(catalogControllerProvider.notifier).deleteItem(item.id!);
+      if (context.mounted) {
+        final error = ref.read(catalogControllerProvider).errorMessage;
+        if (error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error),
+              backgroundColor: AppColors.danger,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -389,69 +401,15 @@ class _ItemAvatarWidget extends StatelessWidget {
     this.size = 52,
   });
 
-  IconData _typeIcon(String type) {
-    switch (type) {
-      case 'Bicicleta':
-      case 'Bike':
-        return Icons.directions_bike_rounded;
-      case 'Carrinho':
-        return Icons.electric_rickshaw_rounded;
-      default:
-        return Icons.category_rounded;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final itemColor = AppColors.fromHex(item.colorHex);
-
-    Widget fallback = Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: itemColor,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Icon(
-        _typeIcon(item.type),
-        color: AppColors.contrastingTextColor(itemColor),
-        size: size * 0.52,
-      ),
+    return RentalItemAvatar(
+      itemName: item.name,
+      photoPath: item.photoPath,
+      colorHex: item.colorHex,
+      itemType: item.type,
+      size: size,
     );
-
-    if (!item.hasPhoto) {
-      return fallback;
-    }
-
-    final path = item.photoPath!.trim();
-    if (item.isNetworkPhoto) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: Image.network(
-          path,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => fallback,
-        ),
-      );
-    }
-
-    final file = File(path);
-    if (file.existsSync()) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: Image.file(
-          file,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => fallback,
-        ),
-      );
-    }
-
-    return fallback;
   }
 }
 
@@ -496,12 +454,15 @@ class _ItemFormDialogState extends ConsumerState<_ItemFormDialog> {
       final picker = ImagePicker();
       final picked = await picker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 85,
       );
-      if (picked != null && mounted) {
-        setState(() {
-          _photoPathController.text = picked.path;
-        });
+      if (picked != null) {
+        final permanentPath = await ItemImageService.instance
+            .saveImageToAppStorage(picked.path);
+        if (mounted) {
+          setState(() {
+            _photoPathController.text = permanentPath;
+          });
+        }
       }
     } catch (e) {
       if (!mounted) return;
@@ -722,12 +683,24 @@ class _ItemFormDialogState extends ConsumerState<_ItemFormDialog> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
+                            RentalItemAvatar(
+                              itemName: _nameController.text.trim().isEmpty
+                                  ? 'Prévia do Item'
+                                  : _nameController.text.trim(),
+                              photoPath: _photoPathController.text.trim().isEmpty
+                                  ? null
+                                  : _photoPathController.text.trim(),
+                              colorHex: _selectedColorHex,
+                              itemType: _selectedType,
+                              size: 52,
+                            ),
+                            const SizedBox(width: 12),
                             Expanded(
                               child: TextFormField(
                                 controller: _photoPathController,
                                 decoration: InputDecoration(
-                                  labelText: 'URL ou Caminho da Foto (Opcional)',
-                                  hintText: 'https://... ou arquivo da galeria',
+                                  labelText: 'URL ou Foto Salva no App (Opcional)',
+                                  hintText: 'Selecione da galeria para salvar no app',
                                   prefixIcon: const Icon(Icons.image_outlined),
                                   suffixIcon:
                                       _photoPathController.text.isNotEmpty

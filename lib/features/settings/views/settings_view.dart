@@ -19,15 +19,26 @@ class SettingsView extends ConsumerStatefulWidget {
 class _SettingsViewState extends ConsumerState<SettingsView> {
   final Map<String, TextEditingController> _priceControllers = {};
   final Map<String, TextEditingController> _minutesControllers = {};
+  late final TextEditingController _surchargeMinuteController;
   bool _initializedFromState = false;
 
   @override
   void initState() {
     super.initState();
+    final initialSettings = ref.read(settingsControllerProvider);
     for (final cat in SettingsController.categories) {
-      _priceControllers[cat] = TextEditingController();
-      _minutesControllers[cat] = TextEditingController();
+      final preset = initialSettings.presetFor(cat);
+      _priceControllers[cat] = TextEditingController(
+        text: preset.defaultPrice.toStringAsFixed(2).replaceAll('.', ','),
+      );
+      _minutesControllers[cat] = TextEditingController(
+        text: preset.defaultMinutes.toString(),
+      );
     }
+    _surchargeMinuteController = TextEditingController(
+      text: initialSettings.surchargeStartMinute.toString(),
+    );
+    _initializedFromState = initialSettings.isLoaded;
   }
 
   void _syncControllers(AppSettingsState settings) {
@@ -38,6 +49,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           .replaceAll('.', ',');
       _minutesControllers[cat]?.text = preset.defaultMinutes.toString();
     }
+    _surchargeMinuteController.text = settings.surchargeStartMinute.toString();
   }
 
   @override
@@ -48,6 +60,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     for (final c in _minutesControllers.values) {
       c.dispose();
     }
+    _surchargeMinuteController.dispose();
     super.dispose();
   }
 
@@ -79,15 +92,23 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       );
     }
 
+    final surchargeMin =
+        (int.tryParse(_surchargeMinuteController.text.trim()) ?? 4).clamp(
+          1,
+          120,
+        );
+    _surchargeMinuteController.text = surchargeMin.toString();
+
     await ref
         .read(settingsControllerProvider.notifier)
-        .saveAllPresets(currentPresets);
+        .saveAllPresets(currentPresets, surchargeStartMinute: surchargeMin);
+    await ref.read(rentalControllerProvider.notifier).loadRentals();
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(
-          'Configurações padrão salvas com sucesso!',
+          'Configurações padrão e regra de acréscimo salvas com sucesso!',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
         backgroundColor: AppColors.success,
@@ -98,15 +119,14 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
-    final settingsState = ref.watch(settingsControllerProvider);
-    if (!_initializedFromState && settingsState.isLoaded) {
-      _syncControllers(settingsState);
-      _initializedFromState = true;
-    } else if (!_initializedFromState &&
-        (_priceControllers['Bicicleta']?.text.isEmpty ?? true)) {
-      _syncControllers(settingsState);
-    }
+    ref.listen<AppSettingsState>(settingsControllerProvider, (prev, next) {
+      if (!_initializedFromState && next.isLoaded) {
+        _syncControllers(next);
+        _initializedFromState = true;
+      }
+    });
 
+    final settingsState = ref.watch(settingsControllerProvider);
     final isDark = settingsState.themeMode == ThemeMode.dark;
 
     return SingleChildScrollView(
@@ -251,6 +271,218 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 );
               }),
               const SizedBox(height: 8),
+              // Card de Configuração do Tempo para Iniciar Acréscimo
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    color: AppColors.warning.withValues(alpha: 0.45),
+                    width: 1.5,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Builder(
+                    builder: (context) {
+                      final currentMin =
+                          (int.tryParse(
+                                _surchargeMinuteController.text.trim(),
+                              ) ??
+                              settingsState.surchargeStartMinute)
+                              .clamp(1, 120);
+                      final toleranceMin = (currentMin - 1).clamp(0, 119);
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: AppColors.warning.withValues(
+                                  alpha: 0.15,
+                                ),
+                                foregroundColor: AppColors.warning,
+                                child: const Icon(Icons.timer_rounded),
+                              ),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Tempo até Começar a Contar o Acréscimo',
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    SizedBox(height: 2),
+                                    Text(
+                                      'Escolha em qual minuto de atraso começa a adicionar R\$ 1,00 (ex: 3 min, 4 min, 5 min).',
+                                      style: TextStyle(
+                                        fontSize: 12.5,
+                                        color: AppColors.textSecondaryLight,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              IconButton.filledTonal(
+                                onPressed: () {
+                                  final next = (currentMin - 1).clamp(1, 120);
+                                  setState(() {
+                                    _surchargeMinuteController.text = next
+                                        .toString();
+                                  });
+                                  ref
+                                      .read(settingsControllerProvider.notifier)
+                                      .updateSurchargeStartMinute(next);
+                                  ref
+                                      .read(rentalControllerProvider.notifier)
+                                      .loadRentals();
+                                },
+                                icon: const Icon(Icons.remove_rounded),
+                                tooltip: 'Diminuir 1 minuto',
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _surchargeMinuteController,
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                  decoration: const InputDecoration(
+                                    labelText:
+                                        'Minuto de Início do Acréscimo (min)',
+                                    prefixIcon: Icon(
+                                      Icons.av_timer_rounded,
+                                      color: AppColors.warning,
+                                    ),
+                                    helperText:
+                                        'Minuto de atraso em que soma R\$ 1,00 inicial',
+                                  ),
+                                  onChanged: (val) {
+                                    final parsed = int.tryParse(val.trim());
+                                    if (parsed != null && parsed >= 1) {
+                                      setState(() {});
+                                      ref
+                                          .read(
+                                            settingsControllerProvider.notifier,
+                                          )
+                                          .updateSurchargeStartMinute(parsed);
+                                      ref
+                                          .read(
+                                            rentalControllerProvider.notifier,
+                                          )
+                                          .loadRentals();
+                                    } else {
+                                      setState(() {});
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              IconButton.filledTonal(
+                                onPressed: () {
+                                  final next = (currentMin + 1).clamp(1, 120);
+                                  setState(() {
+                                    _surchargeMinuteController.text = next
+                                        .toString();
+                                  });
+                                  ref
+                                      .read(settingsControllerProvider.notifier)
+                                      .updateSurchargeStartMinute(next);
+                                  ref
+                                      .read(rentalControllerProvider.notifier)
+                                      .loadRentals();
+                                },
+                                icon: const Icon(Icons.add_rounded),
+                                tooltip: 'Aumentar 1 minuto',
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [1, 2, 3, 4, 5, 6, 10].map((m) {
+                              final isSelected = currentMin == m;
+                              return ChoiceChip(
+                                label: Text(
+                                  m == 4 ? '$m min (Padrão)' : '$m min',
+                                  style: TextStyle(
+                                    fontWeight: isSelected
+                                        ? FontWeight.w800
+                                        : FontWeight.w600,
+                                  ),
+                                ),
+                                selected: isSelected,
+                                selectedColor: AppColors.warning.withValues(
+                                  alpha: 0.25,
+                                ),
+                                onSelected: (_) {
+                                  setState(() {
+                                    _surchargeMinuteController.text = m
+                                        .toString();
+                                  });
+                                  ref
+                                      .read(settingsControllerProvider.notifier)
+                                      .updateSurchargeStartMinute(m);
+                                  ref
+                                      .read(rentalControllerProvider.notifier)
+                                      .loadRentals();
+                                },
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 14),
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: AppColors.primary.withValues(alpha: 0.25),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.info_outline_rounded,
+                                  color: AppColors.primary,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    toleranceMin == 0
+                                        ? 'Regra Ativa: Sem tolerância. Ao atingir 1 minuto de atraso, adiciona-se R\$ 1,00 + R\$ 1,00 por minuto completo adicional.'
+                                        : 'Regra Ativa: Tolerância de $toleranceMin minuto(s) após o término previsto. '
+                                              'A partir do $currentMinº minuto de atraso, adiciona-se R\$ 1,00 + R\$ 1,00 por minuto completo adicional.',
+                                    style: const TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
               Card(
                 child: SwitchListTile(
                   secondary: Icon(
@@ -270,27 +502,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         .read(settingsControllerProvider.notifier)
                         .toggleThemeMode(value);
                   },
-                ),
-              ),
-              const SizedBox(height: 16),
-              Card(
-                color: AppColors.primary.withValues(alpha: 0.06),
-                elevation: 0,
-                child: const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Icon(Icons.info_outline_rounded, color: AppColors.primary),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'Regra de Acréscimo Ativa: Tolerância de 3 minutos após o término previsto. '
-                          'A partir do 4º minuto de atraso, adiciona-se R\$ 1,00 + R\$ 1,00 por minuto completo adicional.',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
               const SizedBox(height: 24),

@@ -35,8 +35,15 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
   @override
   void initState() {
     super.initState();
-    _minutesController = TextEditingController(text: '30');
-    _priceController = TextEditingController(text: '15,00');
+    final settingsState = ref.read(settingsControllerProvider);
+    final bikePreset = settingsState.presetFor('Bicicleta');
+    _minutesController = TextEditingController(
+      text: bikePreset.defaultMinutes.toString(),
+    );
+    _priceController = TextEditingController(
+      text: bikePreset.defaultPrice.toStringAsFixed(2).replaceAll('.', ','),
+    );
+    _hasAppliedInitialPreset = settingsState.isLoaded;
   }
 
   @override
@@ -58,6 +65,7 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
   void _toggleItemSelection(ItemModel item) {
     final id = item.id;
     if (id == null) return;
+    if (ref.read(rentalControllerProvider).busyItemIds.contains(id)) return;
 
     setState(() {
       if (_selectedItemIds.contains(id)) {
@@ -119,6 +127,20 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
         .createBatchRentals(requests);
 
     if (mounted) {
+      final error = ref.read(rentalControllerProvider).errorMessage;
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              error,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            backgroundColor: AppColors.danger,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -137,18 +159,22 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AppSettingsState>(settingsControllerProvider, (prev, next) {
+      if (!_hasAppliedInitialPreset &&
+          next.isLoaded &&
+          _selectedItemIds.isEmpty) {
+        final bikePreset = next.presetFor('Bicicleta');
+        _minutesController.text = bikePreset.defaultMinutes.toString();
+        _priceController.text = bikePreset.defaultPrice
+            .toStringAsFixed(2)
+            .replaceAll('.', ',');
+        _hasAppliedInitialPreset = true;
+      }
+    });
+
     final catalogState = ref.watch(catalogControllerProvider);
     final rentalsState = ref.watch(rentalControllerProvider);
     final settingsState = ref.watch(settingsControllerProvider);
-
-    if (!_hasAppliedInitialPreset && settingsState.isLoaded) {
-      final bikePreset = settingsState.presetFor('Bike');
-      _minutesController.text = bikePreset.defaultMinutes.toString();
-      _priceController.text = bikePreset.defaultPrice
-          .toStringAsFixed(2)
-          .replaceAll('.', ',');
-      _hasAppliedInitialPreset = true;
-    }
 
     final activeItems = catalogState.activeItems;
     final busyIds = rentalsState.busyItemIds;
@@ -252,7 +278,8 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
                     itemCount: activeItems.length,
                     itemBuilder: (context, index) {
                       final item = activeItems[index];
-                      final itemId = item.id!;
+                      final itemId = item.id;
+                      if (itemId == null) return const SizedBox.shrink();
                       final isSelected = _selectedItemIds.contains(itemId);
                       final isBusy = busyIds.contains(itemId);
                       final itemColor = AppColors.fromHex(item.colorHex);
@@ -271,12 +298,16 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
                         ),
                         child: CheckboxListTile(
                           value: isSelected,
-                          onChanged: (_) => _toggleItemSelection(item),
+                          enabled: !isBusy,
+                          onChanged: isBusy
+                              ? null
+                              : (_) => _toggleItemSelection(item),
                           secondary: RentalItemAvatar(
+                            itemName: item.name,
                             photoPath: item.photoPath,
                             colorHex: item.colorHex,
                             itemType: item.type,
-                            size: 44,
+                            size: 46,
                           ),
                           title: Row(
                             children: [

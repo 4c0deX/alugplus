@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:local_notifier/local_notifier.dart';
 
+import '../utils/time_utils.dart';
+
 class NotificationService {
   NotificationService._();
 
@@ -71,14 +73,15 @@ class NotificationService {
     );
   }
 
-  /// Envia notificação nativa exatamente no 4º minuto de atraso avisando início de cobrança de acréscimo.
+  /// Envia notificação nativa exatamente no minuto configurado de atraso avisando início de cobrança de acréscimo.
   Future<void> notifySurchargeStarted({
     required int rentalId,
     required String itemName,
   }) async {
+    final min = TimeUtils.surchargeTriggerMinute;
     await _sendNotification(
       id: rentalId * 10 + 2,
-      title: 'Acréscimo Iniciado (4º min) • AlugPlus+',
+      title: 'Acréscimo Iniciado ($minº min) • AlugPlus+',
       body:
           'Tolerância encerrada para "$itemName". Cobrança de acréscimo por atraso iniciada (R\$ 1,00/min).',
     );
