@@ -217,7 +217,7 @@ class ResponsiveScaffold extends ConsumerWidget {
   }
 }
 
-/// Ícone de raio estilizado assinatura visual do AlugPlus+ (Azul com Branco)
+/// Ícone de raio estilizado assinatura visual do AlugPlus+ (Roxo com Branco • Purple Edition)
 class StylizedBoltBadge extends StatelessWidget {
   final double size;
 
@@ -233,7 +233,7 @@ class StylizedBoltBadge extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF1E88E5), Color(0xFF0D47A1)],
+          colors: [AppColors.primaryLight, AppColors.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
