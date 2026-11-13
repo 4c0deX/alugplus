@@ -588,7 +588,7 @@ class _ItemFormDialogState extends ConsumerState<_ItemFormDialog> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Cor do Equipamento (Paleta de 30 Cores)',
+                              'Cor do Equipamento (Paleta de 70 Cores)',
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,

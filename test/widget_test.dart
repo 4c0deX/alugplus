@@ -16,11 +16,11 @@ void main() {
   });
 
   group('Regras de Negócio • Paleta e Tempo/Acréscimo', () {
-    test('Paleta fixa possui exatamente as 30 cores hexadecimais distintas', () {
-      expect(AppColors.itemColorPalette.length, 30);
-      expect(AppColors.itemColorPalette.toSet().length, 30);
+    test('Paleta expandida possui exatamente as 70 cores hexadecimais distintas', () {
+      expect(AppColors.itemColorPalette.length, 70);
+      expect(AppColors.itemColorPalette.toSet().length, 70);
       expect(AppColors.itemColorPalette.first, '#E53935');
-      expect(AppColors.itemColorPalette.last, '#263238');
+      expect(AppColors.itemColorPalette.last, '#4F46E5');
     });
 
     test('Cálculo de progresso e acréscimo após 3 min de tolerância', () {

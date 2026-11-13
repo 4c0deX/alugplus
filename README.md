@@ -1,20 +1,21 @@
 <div align="center">
 
-![AlugPlus+ Banner](docs/assets/banner.svg)
+![AlugPlus+ Purple Banner](docs/assets/banner.svg)
 
 <br />
 
+[![Branch Purple](https://img.shields.io/badge/Branch-Purple_Edition-7C3AED?style=for-the-badge&logo=git&logoColor=white)](#)
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
-[![Riverpod](https://img.shields.io/badge/State-Riverpod_3-1565C0?style=for-the-badge&logo=flutter&logoColor=white)](https://riverpod.dev)
+[![Riverpod](https://img.shields.io/badge/State-Riverpod_3-7C3AED?style=for-the-badge&logo=flutter&logoColor=white)](https://riverpod.dev)
 [![SQLite](https://img.shields.io/badge/SQLite-Offline--First-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org)
-[![Platforms](https://img.shields.io/badge/Plataformas-Android_%7C_iOS_%7C_Windows_%7C_Linux-2E7D32?style=for-the-badge)](#)
+[![Experimental](https://img.shields.io/badge/Features-Experimental-5B21B6?style=for-the-badge&logo=vitest&logoColor=white)](#)
 
-**Sistema profissional e offline-first para gestão de locação de bicicletas, carrinhos e equipamentos recreativos em tempo real.**
+**Versão experimental do AlugPlus+ com novo tema Purple, paleta estendida de 70 cores, motor de imagens em RAM e ferramentas inovadoras de gestão em tempo real.**
 
-[Visão Geral](#-visão-geral-e-interface) •
-[Funcionalidades](#-principais-funcionalidades) •
-[Regras de Negócio](#-regras-de-negócio-e-inteligência-de-tempo) •
+[Visão Geral](#-visão-geral-e-identidade-purple) •
+[Funcionalidades Experimentais](#-laboratório-de-funcionalidades-experimentais) •
+[Catálogo de 70 Cores](#-paleta-expandida-de-70-cores) •
+[Regras de Negócio](#-regras-de-negócio-e-motor-de-tempo) •
 [Arquitetura](#-arquitetura-e-banco-de-dados) •
 [Como Executar](#-como-executar-e-compilar)
 
@@ -22,9 +23,11 @@
 
 ---
 
-## 🖥️ Visão Geral e Interface
+## 🔮 Visão Geral e Identidade Purple
 
-O **AlugPlus+** foi projetado para operadores de locação que precisam de **velocidade, precisão no controle de tempo e confiabilidade total sem depender de internet**. Com tema escuro nativo de alto contraste (`#0F172A` / `#1E293B`) e assinatura visual em azul (`#1565C0` / `#0D47A1`), o aplicativo se adapta automaticamente entre celulares (`NavigationBar`) e computadores/tablets (`NavigationRail`).
+A branch **Purple** do **AlugPlus+** é o laboratório de inovação e recursos experimentais do ecossistema. Abandonando a identidade corporativa azul padrão, esta edição adota uma temática **Roxo/Púrpura de Alto Contraste** (`#7C3AED` / `#5B21B6` / `#A78BFA`) sobre superfícies noturnas profundas (`#0F172A` / `#1E293B`).
+
+Projetado especificamente para operadores que buscam **máxima fluidez visual**, testes de novas interfaces e recursos avançados de controle de locação de bicicletas, patinetes e carrinhos.
 
 <div align="center">
 
@@ -34,104 +37,106 @@ O **AlugPlus+** foi projetado para operadores de locação que precisam de **vel
 
 ---
 
-## ✨ Principais Funcionalidades
+## 🧪 Laboratório de Funcionalidades Experimentais
 
-| Módulo | Recursos em Destaque |
+Esta versão traz adições exclusivas desenvolvidas e testadas diretamente na branch **Purple**:
+
+| Módulo Experimental | Descrição Técnica & Benefício Operacional |
 | :--- | :--- |
-| **📊 Painel (Dashboard)** | • KPIs em tempo real: **Itens Disponíveis**, **Alugados Agora** e **Faturamento do Dia**.<br>• Monitoramento ao vivo dos aluguéis ativos com barras de progresso coloridas.<br>• Botão de ação rápida (`+ Novo Aluguel`) para lançamentos individuais ou em lote. |
-| **⏱️ Controle de Aluguéis** | • **Cronômetro de 1 segundo:** Barra de progresso na cor do item que muda para vermelho ao atingir `100%` (travada em 100%).<br>• **Calculadora Didática de Tempo:** Adicione ou reduza minutos usando expressões como `15`, `-10` ou `10+20+5`.<br>• **Troca de Equipamento & Valor:** Modais modernos com cores de destaque e preview instantâneo.<br>• **Histórico Inteligente:** Limite automático de 200 registros concluídos para manter o banco ultraleve. |
-| **🚲 Catálogo de Itens** | • Filtro rápido entre **"Apenas itens comigo / ativos"** e **"Todos"**.<br>• Seletor visual em grade com **30 cores hexadecimais exclusivas**.<br>• Suporte a foto do equipamento via Galeria (`image_picker`) ou URL Web. |
-| **💰 Gestão Financeira** | • **Isolamento de Métricas (`daily_financial_stats`):** O faturamento jamais é perdido mesmo ao limpar o histórico de aluguéis.<br>• Gráfico de barras por faixa horária (`17-18h`, `18-19h`, etc.) e gráfico de pizza por categoria (`fl_chart`).<br>• Fechamento de turno (**Resetar / Fechar Dia**) e opção para limpar fechamentos antigos. |
-| **⚙️ Configurações** | • Preço padrão e tempo padrão configuráveis por categoria (`Bike`, `Carrinho`, `Outro`).<br>• Alternância instantânea entre **Modo Escuro (`#0F172A`)** e **Modo Claro (`#F8FAFC`)**.<br>• **Zona de Manutenção:** Restauração completa de fábrica com confirmação de segurança. |
+| **🟣 Tema Roxo Vibrante (Purple Edition)** | Redefinição completa dos tokens do `ThemeData`, gradientes de botões de ação flutuante (`FloatingActionButton`), AppBar e insígnia estilizada de raio em tons de violeta e ametista. |
+| **🎨 Mega Paleta de 70 Cores** | Expansão do catálogo de 30 para **70 cores hexadecimais exclusivas** categorizadas (roxos, violetas, fúcsias, esmeraldas, cianos, âmbares e safiras). |
+| **🖼️ Pipeline de Imagens & Otimização de RAM** | Armazenamento de fotos originais em resolução total em disco, enquanto a memória RAM processa e mantém apenas **miniaturas leves de 160px**, zerando travamentos e consumo de memória. |
+| **🔍 Janela Flutuante com Super Zoom (4.5x)** | Ao tocar na foto de qualquer item (Catálogo, Histórico ou Aluguel Ativo), abre-se um modal flutuante com fundo desfocado (`BackdropFilter`) e zoom interativo por pinça ou toque duplo. |
+| **⏱️ Gatilho de Acréscimo Parametrizável** | Ajuste flexível do minuto exato de início de acréscimo (`3 min`, `4 min`, `5 min`, etc.) direto na aba de Configurações, com recálculo dinâmico nos cronômetros. |
+| **📱 Exportador Direto para WhatsApp** | Botão de 1 toque no Controle de Aluguéis que copia todo o lote de saídas, chegadas e valores pagos já formatados para envio imediato ao WhatsApp corporativo. |
+| **🗑️ Expurgo Financeiro Atômico** | Botão individual de exclusão no Histórico que apaga o aluguel e desconta automaticamente seu valor e contagem de `daily_financial_stats` sem deixar rastros. |
 
 ---
 
-## ⚡ Regras de Negócio e Inteligência de Tempo
+## 🎨 Paleta Expandida de 70 Cores
 
-### 1. Cronômetro & Barra de Progresso
-A cada **1 segundo**, o motor central recalcula o progresso de todas as locações ativas:
+O catálogo de equipamentos agora conta com **70 cores hexadecimais** distintas para personalização ilimitada da frota:
+
+```text
+[ 30 Cores Clássicas ]
+#E53935  #D81B60  #8E24AA  #5E35B1  #3949AB  #1E88E5  #039BE5  #00ACC1  #00897B  #43A047
+#7CB342  #C0CA33  #FDD835  #FFB300  #FB8C00  #F4511E  #6D4C41  #757575  #546E7A  #B71C1C
+#880E4F  #4A148C  #311B92  #0D47A1  #006064  #1B5E20  #33691E  #E65100  #BF360C  #263238
+
+[ 40 Novas Cores - Purple Edition ]
+• Violetas & Púrpuras: #7C3AED  #6D28D9  #9333EA  #A855F7  #C084FC  #4C1D95  #6B21A8  #A21CAF  #C026D3  #E879F9
+• Rosas & Carmins:     #EC4899  #DB2777  #BE185D  #F43F5E  #E11D48
+• Laranjas & Âmbares:  #F97316  #EA580C  #D97706  #F59E0B  #CA8A04
+• Amarelos & Limas:    #EAB308  #84CC16  #65A30D  #4D7C0F
+• Verdes & Teals:      #10B981  #059669  #047857  #14B8A6  #0D9488  #0F766E
+• Cianos & Celestes:   #06B6D4  #0891B2  #0284C7  #0EA5E9  #38BDF8
+• Azuis & Índigos:     #2563EB  #1D4ED8  #1E40AF  #6366F1  #4F46E5
+```
+
+---
+
+## ⚡ Regras de Negócio e Motor de Tempo
+
+### 1. Cronômetro Reativo de Alta Precisão
+A cada segundo (`Timer.periodic`), o motor central recalcula o progresso de cada locação:
 
 $$\text{Progresso} = \text{clamp}\left(\frac{t_{\text{atual}} - t_{\text{início}}}{t_{\text{previsto}} - t_{\text{início}}}, 0.0, 1.0\right)$$
 
-* **Dentro do prazo:** A barra de progresso exibe a cor configurada no equipamento e o percentual avança até `100%`.
-* **Tempo esgotado ($t_{\text{atual}} \ge t_{\text{previsto}}$):** A barra fica **vermelha** imediatamente, trava em `100%` e dispara uma **notificação nativa no sistema operacional** (Android, iOS, Windows ou Linux).
+* **Em andamento:** A barra de progresso adota a cor própria do item cadastrado.
+* **Tempo esgotado ($t_{\text{atual}} \ge t_{\text{previsto}}$):** A barra trava em vermelho vivo, atinge `100%` e emite **notificação local imediata**.
 
-### 2. Cálculo Automático de Acréscimo (Surcharge)
-* **Tolerância de 3 minutos** após o horário previsto de devolução.
-* A partir do **4º minuto exato de atraso**, dispara-se uma nova notificação nativa e inicia-se o cálculo automático:
-
-$$\text{Acréscimo} = \text{R\$ } 1,00 + (\text{minutos completos adicionais além do 4º} \times \text{R\$ } 1,00)$$
-
-* O operador pode editar manualmente o valor do acréscimo e escolher se deseja somá-lo ao valor final através do botão **"Adicionar Acréscimo ao Valor"**.
+### 2. Tolerância e Acréscimo Configuráveis
+* **Gatilho Personalizado:** O operador escolhe em qual minuto de atraso o acréscimo se inicia (padrão: 4º minuto, tolerância de 3 minutos).
+* **Cálculo da Taxa de Atraso:**
+$$\text{Acréscimo} = \text{R\$ } 1,00 + \max\left(0, \text{minutos de atraso} - \text{minuto configurado}\right) \times \text{R\$ } 1,00$$
+* Notificação nativa específica disparada no minuto exato do início da cobrança.
 
 ---
 
 ## 🏗️ Arquitetura e Banco de Dados
 
-O projeto segue uma arquitetura modular baseada em *Features* com estado imutável gerenciado pelo **Riverpod**:
-
 ```mermaid
 flowchart LR
-    UI["Views & Widgets\n(Responsivo Mobile/Desktop)"] --> CTRL["Controllers\n(Flutter Riverpod Notifiers)"]
+    UI["Views & Modais Personalizados\n(Tema Purple / Responsivo)"] --> CTRL["Controllers Riverpod\n(State & Notifiers)"]
+    CTRL --> IMG["ItemImageService\n(Cache RAM 160px + Disco Original)"]
     CTRL --> DB["DatabaseHelper\n(SQLite Transacional)"]
     CTRL --> NOTIF["NotificationService\n(Mobile & Desktop)"]
-    DB --> T1[("items\n(Catálogo 30 Cores)")]
-    DB --> T2[("rentals\n(Retenção Máx. 200)")]
-    DB --> T3[("daily_financial_stats\n(Métricas Isoladas)")]
-```
-
-### Estrutura de Pastas
-
-```text
-lib/
-├── core/
-│   ├── constants/       # Paleta de 30 cores (app_colors.dart) e Temas Dark/Light (app_theme.dart)
-│   ├── database/        # SQLite helper transacional, FFI Desktop, triggers e seeds (migrations.dart)
-│   ├── services/        # Abstração unificada de notificações nativas (notification_service.dart)
-│   └── utils/           # Formatadores BRL/datas e avaliador aritmético de tempo (time_utils.dart)
-├── features/
-│   ├── catalog/         # CRUD de equipamentos, filtro de ativos e seletor de 30 cores
-│   ├── dashboard/       # Painel operacional com KPIs e listagem em tempo real
-│   ├── financial/       # Gráficos fl_chart, fechamento de expediente e histórico diário
-│   ├── rentals/         # Lançamento em lote, cronômetro central, detalhes e calculadora de tempo
-│   └── settings/        # Presets por categoria, tema e restauração de fábrica
-├── shared/
-│   └── widgets/         # Casca responsiva NavigationBar / NavigationRail e Logo estilizada
-└── main.dart            # Inicialização multiplataforma (Mobile + Desktop FFI)
+    DB --> T1[("items\n(70 Cores)")]
+    DB --> T2[("rentals\n(Retenção 200)")]
+    DB --> T3[("daily_financial_stats\n(Isolamento de Métricas)")]
 ```
 
 ---
 
 ## 🚀 Como Executar e Compilar
 
-### 1. Clonar e instalar dependências
+### 1. Selecionar a branch Purple
 ```bash
-git clone https://github.com/SEU-USUARIO/alugplus.git
-cd alugplus
+git checkout Purple
+git pull origin Purple
 flutter pub get
 ```
 
-### 2. Executar em modo de desenvolvimento
+### 2. Executar no seu dispositivo
 ```bash
-# Linux / Windows / Android / iOS
+# Execução direta com recarga rápida
 flutter run
 ```
 
-### 3. Executar os testes automatizados
+### 3. Validar testes automatizados
 ```bash
 flutter analyze
 flutter test
 ```
 
-### 4. Gerar APK de Produção (Android)
+### 4. Compilar o APK Release
 ```bash
 flutter build apk --release
 ```
-O instalador final será gerado em:
-`build/app/outputs/flutter-apk/app-release.apk`
+O pacote final estará disponível em: `build/app/outputs/flutter-apk/app-release.apk`
 
 ---
 
 <div align="center">
-  <sub>Desenvolvido com ❤️ em Flutter • <b>AlugPlus+</b></sub>
+  <sub>AlugPlus+ <b>Purple Edition</b> • Criado para operadores ágeis com 💜 em Flutter</sub>
 </div>
