@@ -1,9 +1,5 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'core/constants/app_theme.dart';
 import 'core/database/database_helper.dart';
@@ -14,11 +10,8 @@ import 'shared/widgets/responsive_scaffold.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicialização nativa para Desktop (Windows / Linux / macOS)o
-  if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
+  // Inicialização do banco para Web e Desktop (Windows / Linux / macOS)
+  DatabaseHelper.ensurePlatformInitialized();
 
   // Pré-inicializa o banco SQLite e o serviço unificado de notificações nativas
   try {

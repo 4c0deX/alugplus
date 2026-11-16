@@ -119,6 +119,16 @@ class RentalCard extends StatelessWidget {
                               label: AppFormatters.currency(rental.totalPaid),
                               highlight: rental.surchargeApplied,
                             ),
+                            Text(
+                              'Pago',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w800,
+                                color: rental.isPaid
+                                    ? AppColors.success
+                                    : AppColors.danger,
+                              ),
+                            ),
                           ],
                         ),
                       ],

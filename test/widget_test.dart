@@ -12,7 +12,9 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 void main() {
   setUpAll(() {
     sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+    if (databaseFactoryOrNull == null) {
+      databaseFactory = databaseFactoryFfi;
+    }
   });
 
   group('Regras de Negócio • Paleta e Tempo/Acréscimo', () {

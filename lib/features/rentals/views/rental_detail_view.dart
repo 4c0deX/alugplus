@@ -360,6 +360,61 @@ class _RentalDetailViewState extends ConsumerState<RentalDetailView> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 14),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: (rental.isPaid
+                              ? AppColors.success
+                              : AppColors.danger)
+                          .withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: (rental.isPaid
+                                ? AppColors.success
+                                : AppColors.danger)
+                            .withValues(alpha: 0.45),
+                      ),
+                    ),
+                    child: SwitchListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 2,
+                      ),
+                      secondary: Icon(
+                        rental.isPaid
+                            ? Icons.check_circle_rounded
+                            : Icons.money_off_rounded,
+                        color: rental.isPaid
+                            ? AppColors.success
+                            : AppColors.danger,
+                      ),
+                      title: Text(
+                        rental.isPaid ? 'Pago' : 'Não Pago',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14.5,
+                          color: rental.isPaid
+                              ? AppColors.success
+                              : AppColors.danger,
+                        ),
+                      ),
+                      subtitle: Text(
+                        rental.isPaid
+                            ? 'Pagamento confirmado'
+                            : 'Aguardando pagamento na devolução',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      activeThumbColor: AppColors.success,
+                      value: rental.isPaid,
+                      onChanged: (val) {
+                        if (rental.id != null) {
+                          ref
+                              .read(rentalControllerProvider.notifier)
+                              .togglePaymentStatus(rental.id!, val);
+                        }
+                      },
+                    ),
+                  ),
                   const Divider(height: 24),
                   const Text(
                     'Acréscimo por Atraso (Editável pelo Operador)',

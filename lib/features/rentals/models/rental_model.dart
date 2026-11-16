@@ -13,6 +13,7 @@ class RentalModel {
   final double surcharge;
   final bool surchargeApplied;
   final bool isManualSurcharge;
+  final bool isPaid;
   final double totalPaid;
   final String status; // 'active' | 'completed'
   final String createdDate; // YYYY-MM-DD
@@ -33,6 +34,7 @@ class RentalModel {
     this.surcharge = 0.0,
     this.surchargeApplied = false,
     this.isManualSurcharge = false,
+    this.isPaid = false,
     required this.totalPaid,
     required this.status,
     required this.createdDate,
@@ -88,6 +90,7 @@ class RentalModel {
     double? surcharge,
     bool? surchargeApplied,
     bool? isManualSurcharge,
+    bool? isPaid,
     double? totalPaid,
     String? status,
     String? createdDate,
@@ -106,6 +109,7 @@ class RentalModel {
       surcharge: surcharge ?? this.surcharge,
       surchargeApplied: surchargeApplied ?? this.surchargeApplied,
       isManualSurcharge: isManualSurcharge ?? this.isManualSurcharge,
+      isPaid: isPaid ?? this.isPaid,
       totalPaid: totalPaid ?? this.totalPaid,
       status: status ?? this.status,
       createdDate: createdDate ?? this.createdDate,
@@ -127,6 +131,7 @@ class RentalModel {
       'surcharge': surcharge,
       'surcharge_applied': surchargeApplied ? 1 : 0,
       'is_manual_surcharge': isManualSurcharge ? 1 : 0,
+      'is_paid': isPaid ? 1 : 0,
       'total_paid': totalPaid,
       'status': status,
       'created_date': createdDate,
@@ -151,6 +156,7 @@ class RentalModel {
       surchargeApplied: ((map['surcharge_applied'] as num?)?.toInt() ?? 0) == 1,
       isManualSurcharge:
           ((map['is_manual_surcharge'] as num?)?.toInt() ?? 0) == 1,
+      isPaid: ((map['is_paid'] as num?)?.toInt() ?? 0) == 1,
       totalPaid: (map['total_paid'] as num?)?.toDouble() ?? 0.0,
       status: (map['status'] as String?) ?? 'active',
       createdDate: (map['created_date'] as String?) ?? '',
