@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 import '../utils/formatters.dart';
 import '../utils/time_utils.dart';
@@ -25,12 +26,22 @@ class DatabaseHelper {
     return (val * 100).roundToDouble() / 100.0;
   }
 
-  /// Garante que o driver FFI esteja inicializado em plataformas Desktop.
+  static bool _platformInitialized = false;
+
+  /// Garante que o driver SQLite esteja inicializado para Web e Desktop.
   static void ensurePlatformInitialized() {
-    if (!kIsWeb &&
-        (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
+    if (_platformInitialized) return;
+    if (kIsWeb) {
+      if (databaseFactoryOrNull != databaseFactoryFfiWeb) {
+        databaseFactory = databaseFactoryFfiWeb;
+      }
+      _platformInitialized = true;
+    } else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      if (databaseFactoryOrNull != databaseFactoryFfi) {
+        sqfliteFfiInit();
+        databaseFactory = databaseFactoryFfi;
+      }
+      _platformInitialized = true;
     }
   }
 
@@ -57,20 +68,25 @@ class DatabaseHelper {
   Future<Database> _initDatabase() async {
     ensurePlatformInitialized();
 
-    Directory dbDirectory;
-    try {
-      dbDirectory = await getApplicationDocumentsDirectory();
-    } catch (_) {
-      final dbPath = await getDatabasesPath();
-      dbDirectory = Directory(dbPath);
-    }
+    final String fullPath;
+    if (kIsWeb) {
+      fullPath = DatabaseMigrations.databaseName;
+    } else {
+      Directory dbDirectory;
+      try {
+        dbDirectory = await getApplicationDocumentsDirectory();
+      } catch (_) {
+        final dbPath = await getDatabasesPath();
+        dbDirectory = Directory(dbPath);
+      }
 
-    final targetDir = Directory(p.join(dbDirectory.path, 'alugplus_data'));
-    if (!await targetDir.exists()) {
-      await targetDir.create(recursive: true);
-    }
+      final targetDir = Directory(p.join(dbDirectory.path, 'alugplus_data'));
+      if (!await targetDir.exists()) {
+        await targetDir.create(recursive: true);
+      }
 
-    final fullPath = p.join(targetDir.path, DatabaseMigrations.databaseName);
+      fullPath = p.join(targetDir.path, DatabaseMigrations.databaseName);
+    }
 
     return openDatabase(
       fullPath,
@@ -95,6 +111,15 @@ class DatabaseHelper {
           await db.execute(
             "CREATE UNIQUE INDEX IF NOT EXISTS idx_rentals_unique_active_item ON rentals(item_id) WHERE status = 'active';",
           );
+        }
+        if (oldVersion < 3) {
+          final columns = await db.rawQuery('PRAGMA table_info(rentals)');
+          final hasIsPaid = columns.any((col) => col['name'] == 'is_paid');
+          if (!hasIsPaid) {
+            await db.execute(
+              'ALTER TABLE rentals ADD COLUMN is_paid INTEGER DEFAULT 0;',
+            );
+          }
         }
       },
       onOpen: (db) async {

@@ -109,8 +109,11 @@ class _ItemImagePreviewDialogState extends State<ItemImagePreviewDialog> {
     final itemColor = AppColors.fromHex(widget.colorHex);
     final cleanPath = widget.photoPath?.trim() ?? '';
     final uri = Uri.tryParse(cleanPath);
-    final isNetwork =
-        uri != null && (uri.scheme == 'http' || uri.scheme == 'https');
+    final isNetwork = uri != null &&
+        (uri.scheme == 'http' ||
+            uri.scheme == 'https' ||
+            uri.scheme == 'blob' ||
+            uri.scheme == 'data');
     final originalFile = !isNetwork && cleanPath.isNotEmpty
         ? ItemImageService.instance.originalFile(cleanPath)
         : null;

@@ -31,6 +31,7 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
   late final TextEditingController _minutesController;
   late final TextEditingController _priceController;
   bool _hasAppliedInitialPreset = false;
+  bool _isPaid = false;
 
   @override
   void initState() {
@@ -119,6 +120,7 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
         itemId: itemId,
         durationMinutes: validMinutes,
         basePrice: validPrice,
+        isPaid: _isPaid,
       );
     }).toList();
 
@@ -212,7 +214,7 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF1E88E5), Color(0xFF0D47A1)],
+                    colors: [AppColors.primaryLight, AppColors.primaryDark],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -418,7 +420,48 @@ class _NewRentalSheetState extends ConsumerState<NewRentalSheet> {
               ),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
+          Container(
+            decoration: BoxDecoration(
+              color: (_isPaid ? AppColors.success : AppColors.danger)
+                  .withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: (_isPaid ? AppColors.success : AppColors.danger)
+                    .withValues(alpha: 0.45),
+              ),
+            ),
+            child: SwitchListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 2,
+              ),
+              secondary: Icon(
+                _isPaid
+                    ? Icons.check_circle_rounded
+                    : Icons.pending_actions_rounded,
+                color: _isPaid ? AppColors.success : AppColors.danger,
+              ),
+              title: Text(
+                _isPaid ? 'Aluguel Pago' : 'Aluguel Não Pago',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                  color: _isPaid ? AppColors.success : AppColors.danger,
+                ),
+              ),
+              subtitle: Text(
+                _isPaid
+                    ? 'Cliente já realizou o pagamento na saída'
+                    : 'Cliente pagará na devolução',
+                style: const TextStyle(fontSize: 12),
+              ),
+              activeThumbColor: AppColors.success,
+              value: _isPaid,
+              onChanged: (val) => setState(() => _isPaid = val),
+            ),
+          ),
+          const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             height: 52,

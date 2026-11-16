@@ -2,7 +2,7 @@ class DatabaseMigrations {
   DatabaseMigrations._();
 
   static const String databaseName = 'alugplus.db';
-  static const int databaseVersion = 2;
+  static const int databaseVersion = 3;
 
   static const String createItemsTable = '''
     CREATE TABLE items (
@@ -26,6 +26,7 @@ class DatabaseMigrations {
       surcharge REAL DEFAULT 0.0,
       surcharge_applied INTEGER DEFAULT 0,
       is_manual_surcharge INTEGER DEFAULT 0,
+      is_paid INTEGER DEFAULT 0,
       total_paid REAL NOT NULL,
       status TEXT NOT NULL,
       created_date TEXT NOT NULL,

@@ -15,11 +15,13 @@ class BatchRentalRequestItem {
   final int itemId;
   final int durationMinutes;
   final double basePrice;
+  final bool isPaid;
 
   const BatchRentalRequestItem({
     required this.itemId,
     required this.durationMinutes,
     required this.basePrice,
+    this.isPaid = false,
   });
 }
 
@@ -273,6 +275,7 @@ class RentalController extends Notifier<RentalsState> {
             'surcharge': 0.0,
             'surcharge_applied': 0,
             'is_manual_surcharge': 0,
+            'is_paid': req.isPaid ? 1 : 0,
             'total_paid': req.basePrice,
             'status': 'active',
             'created_date': createdDate,
@@ -452,6 +455,26 @@ class RentalController extends Notifier<RentalsState> {
       await loadRentals();
     } catch (e) {
       state = state.copyWith(errorMessage: 'Erro ao atualizar acréscimo: $e');
+    }
+  }
+
+  /// Atualiza se o aluguel já foi pago ou ainda será pago na entrega
+  Future<void> togglePaymentStatus(int rentalId, bool isPaid) async {
+    try {
+      final db = await _dbHelper.database;
+      await db.transaction((txn) async {
+        await txn.update(
+          'rentals',
+          {'is_paid': isPaid ? 1 : 0},
+          where: 'id = ?',
+          whereArgs: [rentalId],
+        );
+      });
+      await loadRentals();
+    } catch (e) {
+      state = state.copyWith(
+        errorMessage: 'Erro ao atualizar status de pagamento: $e',
+      );
     }
   }
 

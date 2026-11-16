@@ -1,0 +1,3585 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AlugPlus+" />
+  <meta name="theme-color" content="#0D47A1" />
+  <title>AlugPlus+ • Controle de Aluguéis</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2342A5F5'/%3E%3Cstop offset='100%25' stop-color='%230D47A1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='26' fill='url(%23g)'/%3E%3Cpath d='M56 20 L32 54 L49 54 L43 80 L68 46 L51 46 Z' fill='%23FFF' stroke='%23FFF' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2342A5F5'/%3E%3Cstop offset='100%25' stop-color='%230D47A1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='26' fill='url(%23g)'/%3E%3Cpath d='M56 20 L32 54 L49 54 L43 80 L68 46 L51 46 Z' fill='%23FFF' stroke='%23FFF' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --primary: #1565C0;
+      --primary-dark: #0D47A1;
+      --primary-light: #42A5F5;
+      --accent: #0288D1;
+      --success: #2E7D32;
+      --warning: #F57C00;
+      --danger: #D32F2F;
+      --whatsapp: #128C7E;
+      --whatsapp-light: #25D366;
+
+      /* Light theme defaults */
+      --bg-surface: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --bg-input: #FFFFFF;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --border-color: #CBD5E1;
+      --appbar-bg: #0D47A1;
+      --nav-bg: #FFFFFF;
+      --shadow-card: 0 2px 8px rgba(13, 71, 161, 0.08);
+    }
+
+    html.dark {
+      --bg-surface: #0F172A;
+      --bg-card: #1E293B;
+      --bg-input: #1E293B;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --border-color: #334155;
+      --appbar-bg: #1E293B;
+      --nav-bg: #1E293B;
+      --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    input, textarea, .selectable {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    /* Layout Structure */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+
+    .app-bar {
+      background-color: var(--appbar-bg);
+      color: #FFFFFF;
+      padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .app-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .bolt-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+      border: 1.8px solid rgba(255,255,255,0.88);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .app-title {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .tab-pill {
+      background: rgba(255,255,255,0.16);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #FFFFFF;
+      white-space: nowrap;
+    }
+
+    .app-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .active-chip {
+      background: #FFFFFF;
+      color: var(--primary-dark);
+      border: none;
+      border-radius: 20px;
+      padding: 5px 11px;
+      font-size: 12px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .save-file-btn {
+      background: rgba(255,255,255,0.15);
+      color: #FFFFFF;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 10px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .main-area {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .nav-rail {
+      display: none;
+      width: 88px;
+      background-color: var(--nav-bg);
+      border-right: 1px solid var(--border-color);
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 6px;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 18px 16px 100px 16px;
+    }
+
+    .bottom-nav {
+      background-color: var(--nav-bg);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 6px 4px calc(env(safe-area-inset-bottom, 0px) + 6px) 4px;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      position: relative;
+      min-width: 60px;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item .nav-icon-wrap {
+      padding: 4px 14px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background 0.15s ease;
+    }
+
+    .nav-item.active {
+      color: var(--primary-light);
+      font-weight: 800;
+    }
+    html:not(.dark) .nav-item.active {
+      color: var(--primary);
+    }
+
+    .nav-item.active .nav-icon-wrap {
+      background: rgba(21, 101, 192, 0.22);
+    }
+
+    .nav-badge {
+      position: absolute;
+      top: -2px;
+      right: 4px;
+      background: var(--danger);
+      color: #FFF;
+      font-size: 10px;
+      font-weight: 800;
+      min-width: 17px;
+      height: 17px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    @media (min-width: 720px) {
+      .nav-rail {
+        display: flex;
+      }
+      .bottom-nav {
+        display: none;
+      }
+      .content-scroll {
+        padding: 24px 28px 100px 28px;
+      }
+    }
+
+    /* Common UI Elements */
+    .card {
+      background-color: var(--bg-card);
+      border-radius: 16px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .banner-gradient {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      border-radius: 20px;
+      padding: 18px;
+      color: #FFFFFF;
+      box-shadow: 0 6px 16px rgba(13, 71, 161, 0.28);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .banner-bolt {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.16);
+      border: 1.5px solid rgba(255,255,255,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    @media (min-width: 720px) {
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+    }
+
+    .kpi-card {
+      background-color: var(--bg-card);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .kpi-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.1s ease, opacity 0.15s ease;
+      font-family: inherit;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-primary {
+      background-color: var(--primary);
+      color: #FFFFFF;
+    }
+    .btn-primary-dark {
+      background-color: var(--primary-dark);
+      color: #FFFFFF;
+    }
+    .btn-success {
+      background-color: var(--success);
+      color: #FFFFFF;
+    }
+    .btn-warning {
+      background-color: var(--warning);
+      color: #FFFFFF;
+    }
+    .btn-danger {
+      background-color: var(--danger);
+      color: #FFFFFF;
+    }
+    .btn-whatsapp {
+      background-color: var(--whatsapp);
+      color: #FFFFFF;
+    }
+    .btn-tonal {
+      background-color: rgba(21, 101, 192, 0.15);
+      color: var(--primary-light);
+    }
+    html:not(.dark) .btn-tonal {
+      color: var(--primary);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border-color);
+      color: var(--text-primary);
+    }
+    .btn-outline-danger {
+      background: transparent;
+      border: 1.5px solid var(--danger);
+      color: var(--danger);
+    }
+    .btn-sm {
+      padding: 6px 11px;
+      font-size: 12px;
+      border-radius: 9px;
+    }
+    .btn-block {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .fab {
+      position: fixed;
+      right: 20px;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 78px);
+      background-color: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(21, 101, 192, 0.45);
+      cursor: pointer;
+      z-index: 15;
+    }
+    @media (min-width: 720px) {
+      .fab {
+        bottom: 28px;
+        right: 28px;
+      }
+    }
+
+    /* Rental Card */
+    .rental-card {
+      background-color: var(--bg-card);
+      border-radius: 16px;
+      padding: 15px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: transform 0.12s ease;
+    }
+
+    .item-avatar {
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+      cursor: pointer;
+      overflow: visible;
+    }
+    .item-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 14px;
+      display: block;
+    }
+    .zoom-Indicator {
+      position: absolute;
+      right: -3px;
+      bottom: -3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary-dark);
+      border: 1.5px solid #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-size: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+    }
+
+    .progress-track {
+      height: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+      flex: 1;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 0.3s linear;
+    }
+
+    /* Inputs */
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+      border: 1.5px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--primary-light);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      background: rgba(21, 101, 192, 0.12);
+      color: var(--text-primary);
+      border: 1px solid rgba(21, 101, 192, 0.3);
+      border-radius: 10px;
+      padding: 6px 11px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .chip.selected {
+      background: var(--primary);
+      color: #FFF;
+      border-color: var(--primary);
+    }
+    .chip.danger {
+      background: rgba(211, 47, 47, 0.12);
+      color: #EF5350;
+      border-color: rgba(211, 47, 47, 0.35);
+    }
+    .chip.success {
+      background: rgba(46, 125, 50, 0.14);
+      color: #66BB6A;
+      border-color: rgba(46, 125, 50, 0.4);
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.68);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 100;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+    .modal-backdrop.center-modal {
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-sheet {
+      background-color: var(--bg-surface);
+      width: 100%;
+      max-width: 680px;
+      max-height: 92vh;
+      border-radius: 24px 24px 0 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.45);
+      animation: slideUp 0.2s ease-out;
+    }
+    .modal-backdrop.center-modal .modal-sheet {
+      border-radius: 24px;
+      max-width: 540px;
+      max-height: 88vh;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0.5; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-body {
+      padding: 18px 20px calc(env(safe-area-inset-bottom, 0px) + 20px) 20px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1;
+    }
+
+    /* Color Palette 70 Grid */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 7px;
+    }
+    @media (max-width: 420px) {
+      .color-grid {
+        grid-template-columns: repeat(7, 1fr);
+      }
+    }
+    .color-swatch {
+      aspect-ratio: 1;
+      border-radius: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid transparent;
+    }
+    .color-swatch.selected {
+      border-color: #FFFFFF;
+      box-shadow: 0 0 0 2px #000000;
+      transform: scale(1.08);
+    }
+
+    /* Catalog Grid */
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 520px) {
+      .catalog-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 840px) {
+      .catalog-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* Toast / Snackbar & Alert Banner */
+    .toast-container {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 76px);
+      left: 16px;
+      right: 16px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      align-items: center;
+    }
+    .toast {
+      pointer-events: auto;
+      background: #1E293B;
+      color: #FFF;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 560px;
+      width: 100%;
+    }
+
+    /* Sub-tabs (Ativos / Histórico) */
+    .sub-tabs {
+      display: flex;
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border-color);
+    }
+    .sub-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text-secondary);
+      border: none;
+      background: transparent;
+    }
+    .sub-tab.active {
+      background: var(--primary);
+      color: #FFFFFF;
+    }
+
+    /* Bar Chart */
+    .bar-chart-wrap {
+      height: 220px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      gap: 8px;
+      padding: 24px 8px 8px 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      position: relative;
+    }
+    .bar-track {
+      width: 24px;
+      max-width: 100%;
+      height: 160px;
+      background: rgba(21, 101, 192, 0.08);
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .bar-fill {
+      width: 100%;
+      background: var(--primary);
+      border-radius: 8px 8px 0 0;
+      transition: height 0.3s ease;
+    }
+    .bar-label {
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 6px;
+      color: var(--text-secondary);
+    }
+    .bar-val {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--primary-light);
+      margin-bottom: 4px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Aviso exibido APENAS se aberto na pré-visualização bloqueada do WhatsApp/QuickLook no iPhone -->
+  <noscript>
+    <div style="position:fixed;inset:0;z-index:99999;background:#0F172A;color:#F8FAFC;padding:24px 18px;overflow-y:auto;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">
+      <div style="max-width:480px;margin:0 auto;background:#1E293B;border:2px solid #1565C0;border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#42A5F5,#0D47A1);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold;">⚡</div>
+          <div>
+            <div style="font-size:19px;font-weight:800;color:#FFF;">AlugPlus+ no iPhone</div>
+            <div style="font-size:12.5px;color:#42A5F5;font-weight:600;">Como abrir no Safari em 2 passos</div>
+          </div>
+        </div>
+        <p style="font-size:14px;line-height:1.5;color:#CBD5E1;margin:0 0 14px 0;">
+          O visualizador de anexos do WhatsApp no iPhone bloqueia botões interativos. Para usar o <b>AlugPlus+</b> completo no <b>Safari</b> sem internet:
+        </p>
+        <div style="background:#0F172A;border:1px solid #334155;border-radius:14px;padding:14px;margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:800;color:#42A5F5;margin-bottom:6px;">PASSO 1: Salve este arquivo no iPhone</div>
+          <div style="font-size:13px;color:#E2E8F0;line-height:1.45;">
+            Toque no botão <b>Compartilhar (⬆️)</b> no canto da tela e escolha <b>"Salvar em Arquivos"</b>.
+          </div>
+        </div>
+        <div style="background:#0F172A;border:1px solid #334155;border-radius:14px;padding:14px;margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:800;color:#38BDF8;margin-bottom:6px;">PASSO 2: Cole este atalho no Safari</div>
+          <div style="font-size:12.5px;color:#E2E8F0;line-height:1.45;margin-bottom:8px;">
+            Copie o texto abaixo, cole na barra de endereços do <b>Safari</b>, dê Ir e escolha o arquivo <b>AlugPlus_iPhone.html</b>:
+          </div>
+          <div style="background:#1E293B;border:1.5px dashed #1565C0;border-radius:10px;padding:10px;font-family:monospace;font-size:11.5px;color:#F8FAFC;word-break:break-all;user-select:all;-webkit-user-select:all;">data:text/html,&lt;meta name=viewport content=width=device-width&gt;&lt;body style=background:#0F172A;color:#FFF;font-family:sans-serif;text-align:center;padding:40px&gt;&lt;h2 style=color:#42A5F5&gt;⚡ AlugPlus+&lt;/h2&gt;&lt;p&gt;Toque abaixo e selecione o arquivo AlugPlus_iPhone.html:&lt;/p&gt;&lt;input type=file accept=.html style=font-size:16px;padding:12px;background:#1565C0;color:#FFF;border-radius:10px onchange="r=new FileReader();r.onload=()=&gt;{document.open();document.write(r.result);document.close()};r.readAsText(this.files[0])"&gt;</div>
+        </div>
+        <div style="font-size:12px;color:#94A3B8;line-height:1.4;">
+          💡 <b>Alternativa 1-Toque:</b> Você também pode abrir este arquivo direto no app gratuito <b>Documents</b> ou <b>HTML Viewer</b> da App Store.
+        </div>
+      </div>
+    </div>
+  </noscript>
+
+  <!-- Banco de Dados Embutido no Próprio Arquivo HTML (Permite salvar e enviar o próprio arquivo atualizado!) -->
+  <script id="alugplus-embedded-db" type="application/json">null</script>
+
+  <div class="app-shell" id="app-shell">
+    <!-- AppBar -->
+    <header class="app-bar">
+      <div class="app-bar-left">
+        <div class="bolt-badge" title="AlugPlus+">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/></svg>
+        </div>
+        <span class="app-title">AlugPlus+</span>
+        <span class="tab-pill" id="appbar-tab-title">Painel</span>
+      </div>
+      <div class="app-bar-actions">
+        <button class="active-chip" id="appbar-active-chip" style="display:none;" onclick="App.setTab(1)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/></svg>
+          <span id="appbar-active-count">0 ativo(s)</span>
+        </button>
+        <button class="save-file-btn" onclick="App.downloadUpdatedHtmlFile()" title="Salvar cópia atualizada do aplicativo com todos os dados">
+          💾 <span id="save-btn-label">Salvar</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="main-area">
+      <!-- Navigation Rail (Telas Largas) -->
+      <nav class="nav-rail" id="nav-rail"></nav>
+
+      <!-- Conteúdo Principal -->
+      <main class="content-scroll" id="main-content"></main>
+    </div>
+
+    <!-- Bottom Navigation (iPhone / Mobile) -->
+    <nav class="bottom-nav" id="bottom-nav"></nav>
+  </div>
+
+  <!-- Container de Modais -->
+  <div id="modal-root"></div>
+
+  <!-- Container de Toasts / Alertas -->
+  <div class="toast-container" id="toast-root"></div>
+
+  <!-- Input oculto para selecionar foto da Galeria/Câmera do iPhone -->
+  <input type="file" id="hidden-photo-picker" accept="image/*" style="display:none;" />
+  <!-- Input oculto para importar backup JSON -->
+  <input type="file" id="hidden-backup-picker" accept=".json,.html" style="display:none;" />
+
+  <script>
+    /*************************************************************************
+     * ALUGPLUS+ (PURPLE EDITION) — ENGINE COMPLETA 100% OFFLINE PARA IPHONE
+     *************************************************************************/
+
+    const ITEM_COLOR_PALETTE = [
+      '#E53935','#D81B60','#8E24AA','#5E35B1','#3949AB','#1E88E5','#039BE5','#00ACC1','#00897B','#43A047',
+      '#7CB342','#C0CA33','#FDD835','#FFB300','#FB8C00','#F4511E','#6D4C41','#757575','#546E7A','#B71C1C',
+      '#880E4F','#4A148C','#311B92','#0D47A1','#006064','#1B5E20','#33691E','#E65100','#BF360C','#263238',
+      '#7C3AED','#6D28D9','#9333EA','#A855F7','#C084FC','#4C1D95','#6B21A8','#A21CAF','#C026D3','#E879F9',
+      '#EC4899','#DB2777','#BE185D','#F43F5E','#E11D48','#F97316','#EA580C','#D97706','#F59E0B','#CA8A04',
+      '#EAB308','#84CC16','#65A30D','#4D7C0F','#10B981','#059669','#047857','#14B8A6','#0D9488','#0F766E',
+      '#06B6D4','#0891B2','#0284C7','#0EA5E9','#38BDF8','#2563EB','#1D4ED8','#1E40AF','#6366F1','#4F46E5'
+    ];
+
+    const INITIAL_SEED_ITEMS = [
+      { id: 1, name: 'Bicicleta Aro 29 Sport #01', type: 'Bicicleta', color_hex: '#1E88E5', photo_path: null, is_active: 1 },
+      { id: 2, name: 'Bicicleta Passeio Praiana #02', type: 'Bicicleta', color_hex: '#43A047', photo_path: null, is_active: 1 },
+      { id: 3, name: 'Bicicleta Infantil Aro 20 #03', type: 'Bicicleta', color_hex: '#FB8C00', photo_path: null, is_active: 1 },
+      { id: 4, name: 'Carrinho Família Duplo #01', type: 'Carrinho', color_hex: '#E53935', photo_path: null, is_active: 1 },
+      { id: 5, name: 'Carrinho Pedal Kids #02', type: 'Carrinho', color_hex: '#8E24AA', photo_path: null, is_active: 1 },
+      { id: 6, name: 'Patinete Elétrico #01', type: 'Outro', color_hex: '#00ACC1', photo_path: null, is_active: 1 }
+    ];
+
+    const DEFAULT_SETTINGS = {
+      presets: {
+        'Bicicleta': { category: 'Bicicleta', defaultPrice: 15.0, defaultMinutes: 30 },
+        'Carrinho': { category: 'Carrinho', defaultPrice: 25.0, defaultMinutes: 30 },
+        'Outro': { category: 'Outro', defaultPrice: 20.0, defaultMinutes: 30 }
+      },
+      surchargeStartMinute: 4,
+      darkMode: true,
+      soundEnabled: true
+    };
+
+    const MAX_COMPLETED_RENTALS = 200;
+
+    // Utilitários de Formatação e Tempo (Idênticos ao AppFormatters e TimeUtils do Dart)
+    const Formatters = {
+      roundCurrency(val) {
+        if (val < 0.005) return 0.0;
+        return Math.round(val * 100) / 100.0;
+      },
+      currency(value) {
+        const num = Number(value) || 0;
+        return 'R$ ' + num.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      },
+      parseCurrency(input, fallback = 0.0) {
+        if (input === null || input === undefined) return fallback;
+        let cleaned = String(input).replace(/R\$/g, '').replace(/\s+/g, '').trim();
+        if (!cleaned) return fallback;
+        const lastComma = cleaned.lastIndexOf(',');
+        const lastDot = cleaned.lastIndexOf('.');
+        if (lastComma !== -1 && lastDot !== -1) {
+          if (lastComma > lastDot) {
+            cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+          } else {
+            cleaned = cleaned.replace(/,/g, '');
+          }
+        } else if (lastComma !== -1) {
+          cleaned = cleaned.replace(',', '.');
+        } else if (lastDot !== -1) {
+          const dots = (cleaned.match(/\./g) || []).length;
+          if (dots > 1) cleaned = cleaned.replace(/\./g, '');
+        }
+        const parsed = parseFloat(cleaned);
+        return isNaN(parsed) ? fallback : parsed;
+      },
+      pad2(n) {
+        return String(Math.floor(Math.abs(n))).padStart(2, '0');
+      },
+      timeShort(dateInput) {
+        const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+        return `${this.pad2(d.getHours())}:${this.pad2(d.getMinutes())}`;
+      },
+      timeFull(dateInput) {
+        const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+        return `${this.pad2(d.getHours())}:${this.pad2(d.getMinutes())}:${this.pad2(d.getSeconds())}`;
+      },
+      dateBr(dateInput) {
+        const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+        return `${this.pad2(d.getDate())}/${this.pad2(d.getMonth() + 1)}/${d.getFullYear()}`;
+      },
+      sqlDate(dateInput) {
+        const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+        return `${d.getFullYear()}-${this.pad2(d.getMonth() + 1)}-${this.pad2(d.getDate())}`;
+      },
+      sqlDateToBr(sqlDateStr) {
+        if (!sqlDateStr || typeof sqlDateStr !== 'string') return '';
+        const parts = sqlDateStr.split('-');
+        if (parts.length !== 3) return sqlDateStr;
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      },
+      contrastingText(hex) {
+        const clean = String(hex || '#1565C0').replace('#', '').trim();
+        if (clean.length !== 6) return '#FFFFFF';
+        const r = parseInt(clean.substring(0,2), 16);
+        const g = parseInt(clean.substring(2,4), 16);
+        const b = parseInt(clean.substring(4,6), 16);
+        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return yiq >= 150 ? '#0F172A' : '#FFFFFF';
+      }
+    };
+
+    const TimeUtils = {
+      surchargeTriggerMinute: 4,
+      get toleranceMinutes() {
+        return Math.max(0, this.surchargeTriggerMinute - 1);
+      },
+      calculateProgress(startTime, plannedEndTime, currentTime) {
+        const startMs = new Date(startTime).getTime();
+        const endMs = new Date(plannedEndTime).getTime();
+        const nowMs = new Date(currentTime).getTime();
+        const total = endMs - startMs;
+        if (total <= 0) return 1.0;
+        const elapsed = nowMs - startMs;
+        return Math.min(1.0, Math.max(0.0, elapsed / total));
+      },
+      isFinishedOrOverdue(plannedEndTime, currentTime) {
+        return new Date(currentTime).getTime() >= new Date(plannedEndTime).getTime();
+      },
+      overdueMinutes(plannedEndTime, currentTime) {
+        const endMs = new Date(plannedEndTime).getTime();
+        const nowMs = new Date(currentTime).getTime();
+        if (nowMs < endMs) return 0;
+        return Math.floor((nowMs - endMs) / 60000);
+      },
+      hasSurchargeStarted(plannedEndTime, currentTime, triggerMinute) {
+        const eff = Math.min(999, Math.max(1, triggerMinute ?? this.surchargeTriggerMinute));
+        return this.overdueMinutes(plannedEndTime, currentTime) >= eff;
+      },
+      calculateSurcharge(plannedEndTime, currentTime, triggerMinute) {
+        const eff = Math.min(999, Math.max(1, triggerMinute ?? this.surchargeTriggerMinute));
+        const delayMins = this.overdueMinutes(plannedEndTime, currentTime);
+        if (delayMins < eff) return 0.0;
+        return 1.00 + ((delayMins - eff) * 1.00);
+      },
+      formatDurationClock(ms) {
+        const totalSec = Math.floor(Math.abs(ms) / 1000);
+        const hours = Math.floor(totalSec / 3600);
+        const mins = Math.floor((totalSec % 3600) / 60);
+        const secs = totalSec % 60;
+        const mStr = String(mins).padStart(2, '0');
+        const sStr = String(secs).padStart(2, '0');
+        if (hours > 0) {
+          return `${String(hours).padStart(2, '0')}:${mStr}:${sStr}`;
+        }
+        return `${mStr}:${sStr}`;
+      },
+      statusTimeLabel(plannedEndTime, currentTime) {
+        const endMs = new Date(plannedEndTime).getTime();
+        const nowMs = new Date(currentTime).getTime();
+        const diff = endMs - nowMs;
+        if (diff > 0) {
+          return `Restam ${this.formatDurationClock(diff)}`;
+        } else {
+          return `Expirado há ${this.formatDurationClock(-diff)}`;
+        }
+      },
+      hourlySlotKey(dateInput) {
+        const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+        const startH = d.getHours();
+        const endH = (startH + 1) % 24;
+        return `${Formatters.pad2(startH)}-${Formatters.pad2(endH)}`;
+      },
+      evaluateMinutesExpression(input) {
+        const sanitized = String(input || '').replace(/\s+/g, '').trim();
+        if (!sanitized) return null;
+        if (!/^([+-]?\d+)([+-]\d+)*$/.test(sanitized)) return null;
+        const matches = sanitized.match(/[+-]?\d+/g);
+        if (!matches) return null;
+        let total = 0;
+        for (const token of matches) {
+          const v = parseInt(token, 10);
+          if (isNaN(v)) return null;
+          total += v;
+        }
+        return total;
+      }
+    };
+
+    // Sistema de Áudio e Notificações (Web Audio API — funciona 100% offline no iPhone!)
+    const SoundAlert = {
+      ctx: null,
+      init() {
+        try {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.ctx = new AudioCtx();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+          }
+        } catch (_) {}
+      },
+      playAlert(type = 'finished') {
+        if (!DB.data.settings.soundEnabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const freqs = type === 'surcharge' ? [880, 1174.66, 880, 1174.66] : [587.33, 880, 1174.66];
+          freqs.forEach((f, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(f, now + idx * 0.16);
+            gain.gain.setValueAtTime(0.25, now + idx * 0.16);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + (idx + 1) * 0.15);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + idx * 0.16);
+            osc.stop(now + (idx + 1) * 0.16);
+          });
+        } catch (_) {}
+      },
+      notify(title, body, type = 'finished') {
+        this.playAlert(type);
+        App.showToast(`${title}: ${body}`, type === 'surcharge' ? 'warning' : 'danger', 5500);
+        try {
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(title, { body });
+          }
+        } catch (_) {}
+      }
+    };
+
+    // Destrava Web Audio no primeiro toque na tela do iPhone
+    document.addEventListener('touchstart', () => SoundAlert.init(), { once: true, passive: true });
+    document.addEventListener('click', () => SoundAlert.init(), { once: true, passive: true });
+
+    // Camada de Banco de Dados Multi-Persistência (localStorage + IndexedDB + window.name + HTML Embutido)
+    const DB = {
+      STORAGE_KEY: 'alugplus_safari_db_v2',
+      data: null,
+      localStorageAvailable: false,
+
+      createDefaultDb() {
+        return {
+          version: 2,
+          updatedAt: 0,
+          nextItemId: 7,
+          nextRentalId: 1,
+          items: JSON.parse(JSON.stringify(INITIAL_SEED_ITEMS)),
+          rentals: [],
+          daily_financial_stats: {},
+          settings: JSON.parse(JSON.stringify(DEFAULT_SETTINGS))
+        };
+      },
+
+      init() {
+        let candidates = [];
+
+        // 1. Checa banco embutido no HTML
+        try {
+          const el = document.getElementById('alugplus-embedded-db');
+          if (el && el.textContent && el.textContent.trim() !== 'null') {
+            const parsed = JSON.parse(el.textContent);
+            if (parsed && parsed.items) candidates.push(parsed);
+          }
+        } catch (_) {}
+
+        // 2. Checa localStorage
+        try {
+          localStorage.setItem('__alug_test', '1');
+          localStorage.removeItem('__alug_test');
+          this.localStorageAvailable = true;
+          const raw = localStorage.getItem(this.STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.items) candidates.push(parsed);
+          }
+        } catch (_) {
+          this.localStorageAvailable = false;
+        }
+
+        // 3. Checa window.name (funciona no Safari mesmo em abas data: / file:)
+        try {
+          if (window.name && window.name.startsWith('ALUGPLUS_DB:')) {
+            const parsed = JSON.parse(window.name.substring('ALUGPLUS_DB:'.length));
+            if (parsed && parsed.items) candidates.push(parsed);
+          }
+        } catch (_) {}
+
+        if (candidates.length > 0) {
+          candidates.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+          this.data = this.migrate(candidates[0]);
+        } else {
+          this.data = this.createDefaultDb();
+        }
+
+        TimeUtils.surchargeTriggerMinute = this.data.settings.surchargeStartMinute || 4;
+        this.applyTheme();
+        this.save();
+
+        // Tenta sincronizar também com IndexedDB de forma assíncrona
+        this.loadFromIndexedDB();
+      },
+
+      migrate(d) {
+        const def = this.createDefaultDb();
+        if (!d.items) d.items = def.items;
+        for (const it of d.items) {
+          if (it.type === 'Bike') it.type = 'Bicicleta';
+        }
+        if (!d.rentals) d.rentals = [];
+        if (!d.daily_financial_stats) d.daily_financial_stats = {};
+        if (!d.settings) d.settings = def.settings;
+        if (!d.settings.presets) d.settings.presets = def.settings.presets;
+        if (d.settings.surchargeStartMinute === undefined) d.settings.surchargeStartMinute = 4;
+        if (d.settings.darkMode === undefined) d.settings.darkMode = true;
+        if (d.settings.soundEnabled === undefined) d.settings.soundEnabled = true;
+        if (!d.nextItemId) {
+          d.nextItemId = d.items.reduce((m, i) => Math.max(m, i.id || 0), 0) + 1;
+        }
+        if (!d.nextRentalId) {
+          d.nextRentalId = d.rentals.reduce((m, r) => Math.max(m, r.id || 0), 0) + 1;
+        }
+        return d;
+      },
+
+      save() {
+        this.data.updatedAt = Date.now();
+        const json = JSON.stringify(this.data);
+
+        // Atualiza o script embutido no DOM
+        try {
+          const el = document.getElementById('alugplus-embedded-db');
+          if (el) el.textContent = json;
+        } catch (_) {}
+
+        // Salva no localStorage
+        try {
+          localStorage.setItem(this.STORAGE_KEY, json);
+        } catch (_) {}
+
+        // Salva no window.name
+        try {
+          window.name = 'ALUGPLUS_DB:' + json;
+        } catch (_) {}
+
+        // Salva no IndexedDB
+        this.saveToIndexedDB(json);
+      },
+
+      loadFromIndexedDB() {
+        try {
+          if (!window.indexedDB) return;
+          const req = indexedDB.open('AlugPlusSafariDB', 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('state')) {
+              db.createObjectStore('state');
+            }
+          };
+          req.onsuccess = (e) => {
+            const db = e.target.result;
+            const tx = db.transaction('state', 'readonly');
+            const getReq = tx.objectStore('state').get('main');
+            getReq.onsuccess = () => {
+              if (getReq.result) {
+                try {
+                  const idbData = JSON.parse(getReq.result);
+                  if (idbData && (idbData.updatedAt || 0) > (this.data.updatedAt || 0)) {
+                    this.data = this.migrate(idbData);
+                    TimeUtils.surchargeTriggerMinute = this.data.settings.surchargeStartMinute || 4;
+                    this.applyTheme();
+                    App.renderAll();
+                  }
+                } catch (_) {}
+              }
+            };
+          };
+        } catch (_) {}
+      },
+
+      saveToIndexedDB(jsonStr) {
+        try {
+          if (!window.indexedDB) return;
+          const req = indexedDB.open('AlugPlusSafariDB', 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('state')) {
+              db.createObjectStore('state');
+            }
+          };
+          req.onsuccess = (e) => {
+            const db = e.target.result;
+            const tx = db.transaction('state', 'readwrite');
+            tx.objectStore('state').put(jsonStr, 'main');
+          };
+        } catch (_) {}
+      },
+
+      applyTheme() {
+        if (this.data.settings.darkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      },
+
+      get todayDateKey() {
+        return Formatters.sqlDate(new Date());
+      },
+
+      // --- Operações Financeiras Isoladas (Idênticas ao DatabaseHelper do Flutter) ---
+      recordRentalInFinancialStats(dateKey, rentalStartTime, amountPaid, itemCategory, itemName) {
+        const stats = this.data.daily_financial_stats;
+        const slotKey = TimeUtils.hourlySlotKey(rentalStartTime);
+        const roundedAmount = Formatters.roundCurrency(amountPaid);
+
+        if (!stats[dateKey]) {
+          const hourlyMap = {
+            [slotKey]: { count: 1, revenue: roundedAmount },
+            _categories: { [itemCategory]: 1 },
+            _items: { [itemName]: 1 }
+          };
+          stats[dateKey] = {
+            date: dateKey,
+            total_rentals_count: 1,
+            total_revenue: roundedAmount,
+            hourly_data: hourlyMap,
+            is_closed: 0
+          };
+        } else {
+          const current = stats[dateKey];
+          const currentCount = Number(current.total_rentals_count) || 0;
+          const currentRevenue = Number(current.total_revenue) || 0.0;
+          const hourlyMap = current.hourly_data || {};
+
+          const slotEntry = hourlyMap[slotKey] || { count: 0, revenue: 0.0 };
+          hourlyMap[slotKey] = {
+            count: (Number(slotEntry.count) || 0) + 1,
+            revenue: Formatters.roundCurrency((Number(slotEntry.revenue) || 0.0) + amountPaid)
+          };
+
+          if (!hourlyMap._categories) hourlyMap._categories = {};
+          hourlyMap._categories[itemCategory] = (Number(hourlyMap._categories[itemCategory]) || 0) + 1;
+
+          if (!hourlyMap._items) hourlyMap._items = {};
+          hourlyMap._items[itemName] = (Number(hourlyMap._items[itemName]) || 0) + 1;
+
+          current.total_rentals_count = currentCount + 1;
+          current.total_revenue = Formatters.roundCurrency(currentRevenue + amountPaid);
+          current.hourly_data = hourlyMap;
+          current.is_closed = 0;
+        }
+      },
+
+      revertRentalFromFinancialStats(primaryDateKey, fallbackDateKey, rentalStartTime, rentalCompletedAt, amountPaid, itemCategory, itemName) {
+        const stats = this.data.daily_financial_stats;
+        let targetKey = primaryDateKey;
+        if (!stats[targetKey] && fallbackDateKey !== primaryDateKey && stats[fallbackDateKey]) {
+          targetKey = fallbackDateKey;
+        }
+        const current = stats[targetKey];
+        if (!current) return;
+
+        const currentCount = Number(current.total_rentals_count) || 0;
+        const currentRevenue = Number(current.total_revenue) || 0.0;
+        const newCount = Math.max(0, currentCount - 1);
+        const newRevenue = Formatters.roundCurrency(currentRevenue - amountPaid);
+        const hourlyMap = current.hourly_data || {};
+        const isClosed = current.is_closed === 1;
+        const hasClosedSnapshot = Boolean(hourlyMap._closed_hourly_snapshot || hourlyMap._shift_baseline_count !== undefined);
+
+        if (newCount <= 0) {
+          if (isClosed || hasClosedSnapshot) {
+            for (const k of Object.keys(hourlyMap)) {
+              if (!k.startsWith('_')) delete hourlyMap[k];
+            }
+            hourlyMap._shift_baseline_count = 0;
+            hourlyMap._shift_baseline_revenue = 0.0;
+            hourlyMap._closed_hourly_snapshot = {};
+            hourlyMap._closed_categories_snapshot = {};
+            hourlyMap._closed_items_snapshot = {};
+            hourlyMap._categories = {};
+            hourlyMap._items = {};
+            current.total_rentals_count = 0;
+            current.total_revenue = 0.0;
+            current.hourly_data = hourlyMap;
+          } else {
+            current.total_rentals_count = 0;
+            current.total_revenue = 0.0;
+            current.hourly_data = {};
+          }
+          return;
+        }
+
+        const slotKey = TimeUtils.hourlySlotKey(rentalStartTime);
+        const closedAtStr = hourlyMap._shift_closed_at;
+        const closedAt = closedAtStr ? new Date(closedAtStr) : null;
+        const effCompleted = new Date(rentalCompletedAt || rentalStartTime);
+        const isPriorToClosure = closedAt && effCompleted < closedAt;
+
+        if (!isPriorToClosure && hourlyMap[slotKey]) {
+          const slotCount = Math.max(0, (Number(hourlyMap[slotKey].count) || 1) - 1);
+          const slotRev = Formatters.roundCurrency((Number(hourlyMap[slotKey].revenue) || 0.0) - amountPaid);
+          if (slotCount <= 0) {
+            delete hourlyMap[slotKey];
+          } else {
+            hourlyMap[slotKey] = { count: slotCount, revenue: slotRev };
+          }
+          if (hourlyMap._categories && hourlyMap._categories[itemCategory]) {
+            if (hourlyMap._categories[itemCategory] <= 1) delete hourlyMap._categories[itemCategory];
+            else hourlyMap._categories[itemCategory]--;
+          }
+          if (hourlyMap._items && hourlyMap._items[itemName]) {
+            if (hourlyMap._items[itemName] <= 1) delete hourlyMap._items[itemName];
+            else hourlyMap._items[itemName]--;
+          }
+        } else if (hourlyMap._shift_baseline_count !== undefined) {
+          hourlyMap._shift_baseline_count = Math.max(0, (Number(hourlyMap._shift_baseline_count) || 1) - 1);
+          hourlyMap._shift_baseline_revenue = Formatters.roundCurrency((Number(hourlyMap._shift_baseline_revenue) || 0.0) - amountPaid);
+          if (hourlyMap._closed_hourly_snapshot && hourlyMap._closed_hourly_snapshot[slotKey]) {
+            const c = (Number(hourlyMap._closed_hourly_snapshot[slotKey].count) || 1) - 1;
+            const r = Formatters.roundCurrency((Number(hourlyMap._closed_hourly_snapshot[slotKey].revenue) || 0.0) - amountPaid);
+            if (c <= 0) delete hourlyMap._closed_hourly_snapshot[slotKey];
+            else hourlyMap._closed_hourly_snapshot[slotKey] = { count: c, revenue: r };
+          }
+        }
+
+        current.total_rentals_count = newCount;
+        current.total_revenue = newRevenue;
+        current.hourly_data = hourlyMap;
+      },
+
+      adjustRentalRevenueInFinancialStats(primaryDateKey, fallbackDateKey, rentalStartTime, oldAmountPaid, newAmountPaid) {
+        const delta = newAmountPaid - oldAmountPaid;
+        if (Math.abs(delta) < 0.001) return;
+        const stats = this.data.daily_financial_stats;
+        let targetKey = primaryDateKey;
+        if (!stats[targetKey] && fallbackDateKey !== primaryDateKey && stats[fallbackDateKey]) {
+          targetKey = fallbackDateKey;
+        }
+        const current = stats[targetKey];
+        if (!current) return;
+
+        current.total_revenue = Formatters.roundCurrency((Number(current.total_revenue) || 0.0) + delta);
+        const hourlyMap = current.hourly_data || {};
+        const slotKey = TimeUtils.hourlySlotKey(rentalStartTime);
+        if (hourlyMap[slotKey]) {
+          hourlyMap[slotKey].revenue = Formatters.roundCurrency((Number(hourlyMap[slotKey].revenue) || 0.0) + delta);
+        } else if (hourlyMap._shift_baseline_revenue !== undefined) {
+          hourlyMap._shift_baseline_revenue = Formatters.roundCurrency((Number(hourlyMap._shift_baseline_revenue) || 0.0) + delta);
+        }
+      },
+
+      enforceRetentionLimit() {
+        const completed = this.data.rentals
+          .filter(r => r.status === 'completed')
+          .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+        if (completed.length > MAX_COMPLETED_RENTALS) {
+          const excess = completed.length - MAX_COMPLETED_RENTALS;
+          const toDeleteIds = new Set(completed.slice(0, excess).map(r => r.id));
+          this.data.rentals = this.data.rentals.filter(r => !toDeleteIds.has(r.id));
+        }
+      },
+
+      closeAndResetDailyStats(dateKey) {
+        const stats = this.data.daily_financial_stats;
+        if (!stats[dateKey]) {
+          stats[dateKey] = {
+            date: dateKey,
+            total_rentals_count: 0,
+            total_revenue: 0.0,
+            hourly_data: {
+              _shift_baseline_count: 0,
+              _shift_baseline_revenue: 0.0,
+              _shift_closed_at: new Date().toISOString()
+            },
+            is_closed: 1
+          };
+        } else {
+          const row = stats[dateKey];
+          const hourlyMap = row.hourly_data || {};
+          const closedSnapshot = {};
+          for (const k of Object.keys(hourlyMap)) {
+            if (!k.startsWith('_')) {
+              closedSnapshot[k] = hourlyMap[k];
+              delete hourlyMap[k];
+            }
+          }
+          hourlyMap._closed_hourly_snapshot = closedSnapshot;
+          hourlyMap._closed_categories_snapshot = hourlyMap._categories || {};
+          hourlyMap._closed_items_snapshot = hourlyMap._items || {};
+          hourlyMap._categories = {};
+          hourlyMap._items = {};
+          hourlyMap._shift_baseline_count = Number(row.total_rentals_count) || 0;
+          hourlyMap._shift_baseline_revenue = Number(row.total_revenue) || 0.0;
+          hourlyMap._shift_closed_at = new Date().toISOString();
+          row.hourly_data = hourlyMap;
+          row.is_closed = 1;
+        }
+        this.save();
+      },
+
+      resetEntireDatabase() {
+        const keepDark = this.data.settings.darkMode;
+        this.data = this.createDefaultDb();
+        this.data.settings.darkMode = keepDark;
+        this.save();
+      }
+    };
+
+    // Ícones SVG inline para categorias e interface
+    const Icons = {
+      typeIcon(type, size = 24, color = 'currentColor') {
+        if (type === 'Bicicleta' || type === 'Bike') {
+          return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="M15.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM5 12c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5s1.6-3.5 3.5-3.5 3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5zm5.8-10l2.4-2.4.8.8c1.3 1.3 3 2.1 5.1 2.1V9c-1.5 0-2.7-.6-3.6-1.5l-1.9-1.9c-.5-.4-1-.6-1.6-.6s-1.1.2-1.4.6L7.8 8.4c-.4.4-.6.9-.6 1.4 0 .6.2 1.1.6 1.4L11 14v5h2v-6.2l-2.2-2.3zM19 12c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5s1.6-3.5 3.5-3.5 3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5z"/></svg>`;
+        }
+        if (type === 'Carrinho') {
+          return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
+        }
+        return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="M12 2l-5.5 9h11L12 2zm0 3.84L13.93 9h-3.87L12 5.84zM17.5 13c-2.49 0-4.5 2.01-4.5 4.5s2.01 4.5 4.5 4.5 4.5-2.01 4.5-4.5-2.01-4.5-4.5-4.5zm0 7c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5zM3 21.5h8v-8H3v8zm2-6h4v4H5v-4z"/></svg>`;
+      }
+    };
+
+    // Aplicação Principal e Controlador de Estado
+    const App = {
+      initialized: false,
+      currentTab: 0, // 0: Painel, 1: Aluguéis, 2: Catálogo, 3: Financeiro, 4: Configurações
+      rentalsSubTab: 0, // 0: Ativos, 1: Histórico
+      catalogFilter: 'activeOnly', // 'activeOnly' | 'all'
+      notifiedFinishedIds: new Set(),
+      notifiedSurchargeIds: new Set(),
+      manuallyEditedSurchargeIds: new Set(),
+      openRentalDetailId: null,
+
+      tabTitles: ['Painel', 'Aluguéis', 'Catálogo', 'Financeiro', 'Configurações'],
+
+      init() {
+        if (this.initialized) return;
+        this.initialized = true;
+        DB.init();
+        // Marca aluguéis já vencidos na inicialização para não disparar alarme repetido ao abrir
+        const now = new Date();
+        for (const r of this.getActiveRentals()) {
+          if (TimeUtils.isFinishedOrOverdue(r.planned_end_time, now)) {
+            this.notifiedFinishedIds.add(r.id);
+          }
+          if (TimeUtils.hasSurchargeStarted(r.planned_end_time, now)) {
+            this.notifiedSurchargeIds.add(r.id);
+          }
+        }
+        this.renderAll();
+        setInterval(() => this.onTick(), 1000);
+      },
+
+      escapeHtml(str) {
+        return String(str ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      },
+
+      getItemById(id) {
+        return DB.data.items.find(i => i.id === Number(id)) || null;
+      },
+
+      joinRental(r) {
+        const item = this.getItemById(r.item_id);
+        return {
+          ...r,
+          item_name: item ? item.name : 'Item Removido',
+          item_type: item ? (item.type === 'Bike' ? 'Bicicleta' : item.type) : 'Outro',
+          item_color_hex: item ? item.color_hex : '#1565C0',
+          item_photo_path: item ? item.photo_path : null
+        };
+      },
+
+      getActiveRentals() {
+        return DB.data.rentals
+          .filter(r => r.status === 'active')
+          .map(r => this.joinRental(r))
+          .sort((a, b) => new Date(a.planned_end_time) - new Date(b.planned_end_time));
+      },
+
+      getCompletedRentals() {
+        return DB.data.rentals
+          .filter(r => r.status === 'completed')
+          .map(r => this.joinRental(r))
+          .sort((a, b) => new Date(b.actual_end_time || b.start_time) - new Date(a.actual_end_time || a.start_time))
+          .slice(0, MAX_COMPLETED_RENTALS);
+      },
+
+      getBusyItemIds() {
+        return new Set(DB.data.rentals.filter(r => r.status === 'active').map(r => r.item_id));
+      },
+
+      getFinancialSummary() {
+        const todayKey = DB.todayDateKey;
+        const row = DB.data.daily_financial_stats[todayKey];
+        let consolidatedCount = 0;
+        let consolidatedRev = 0.0;
+        let shiftCount = 0;
+        let shiftRev = 0.0;
+        let isClosed = false;
+        const hourlyMetrics = [];
+        const categoryRanking = {};
+        const itemRanking = {};
+
+        if (row) {
+          consolidatedCount = Number(row.total_rentals_count) || 0;
+          consolidatedRev = Number(row.total_revenue) || 0.0;
+          isClosed = row.is_closed === 1;
+          const hourlyMap = row.hourly_data || {};
+          const baseCount = Number(hourlyMap._shift_baseline_count) || 0;
+          const baseRev = Number(hourlyMap._shift_baseline_revenue) || 0.0;
+
+          shiftCount = Math.max(0, consolidatedCount - baseCount);
+          shiftRev = Math.max(0.0, Formatters.roundCurrency(consolidatedRev - baseRev));
+
+          for (const [k, v] of Object.entries(hourlyMap)) {
+            if (k.startsWith('_')) continue;
+            if (v && typeof v === 'object') {
+              hourlyMetrics.push({
+                slot: k,
+                count: Number(v.count) || 0,
+                revenue: Number(v.revenue) || 0.0
+              });
+            }
+          }
+          hourlyMetrics.sort((a, b) => a.slot.localeCompare(b.slot));
+
+          if (hourlyMap._categories) {
+            for (const [k, v] of Object.entries(hourlyMap._categories)) {
+              categoryRanking[k] = Number(v) || 0;
+            }
+          }
+          if (hourlyMap._items) {
+            for (const [k, v] of Object.entries(hourlyMap._items)) {
+              itemRanking[k] = Number(v) || 0;
+            }
+          }
+        }
+
+        const historyDays = Object.values(DB.data.daily_financial_stats)
+          .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+          .slice(0, 30);
+
+        return {
+          todayDate: todayKey,
+          currentShiftRentalsCount: shiftCount,
+          currentShiftRevenue: shiftRev,
+          consolidatedDayCount: consolidatedCount,
+          consolidatedDayRevenue: consolidatedRev,
+          isDayClosed: isClosed,
+          hourlyMetrics,
+          categoryRanking,
+          itemRanking,
+          historyDays
+        };
+      },
+
+      // Ticker Central de 1 Segundo (Atualiza cronômetros, barras e acréscimos sem piscar a tela)
+      onTick() {
+        const now = new Date();
+
+        // Atualiza relógio do Painel
+        const clockEl = document.getElementById('dashboard-live-clock');
+        if (clockEl) {
+          clockEl.textContent = `Monitoramento em tempo real • ${Formatters.dateBr(now)} • ${Formatters.timeFull(now)}`;
+        }
+
+        const activeRaw = DB.data.rentals.filter(r => r.status === 'active');
+        if (activeRaw.length === 0) return;
+
+        let surchargeChanged = false;
+        for (const r of activeRaw) {
+          const joined = this.joinRental(r);
+          const isFinished = TimeUtils.isFinishedOrOverdue(r.planned_end_time, now);
+          const hasSurcharge = TimeUtils.hasSurchargeStarted(r.planned_end_time, now);
+
+          if (isFinished && !this.notifiedFinishedIds.has(r.id)) {
+            this.notifiedFinishedIds.add(r.id);
+            SoundAlert.notify(
+              'Tempo Esgotado • AlugPlus+',
+              `O aluguel de "${joined.item_name}" atingiu o horário previsto de devolução.`,
+              'finished'
+            );
+          }
+
+          if (hasSurcharge && !this.notifiedSurchargeIds.has(r.id)) {
+            this.notifiedSurchargeIds.add(r.id);
+            const min = TimeUtils.surchargeTriggerMinute;
+            SoundAlert.notify(
+              `Acréscimo Iniciado (${min}º min) • AlugPlus+`,
+              `Tolerância encerrada para "${joined.item_name}". Cobrança de acréscimo iniciada (R$ 1,00/min).`,
+              'surcharge'
+            );
+          }
+
+          if (!r.is_manual_surcharge && !this.manuallyEditedSurchargeIds.has(r.id)) {
+            const autoSurcharge = TimeUtils.calculateSurcharge(r.planned_end_time, now);
+            if (Math.abs(autoSurcharge - (r.surcharge || 0)) > 0.001) {
+              r.surcharge = autoSurcharge;
+              r.total_paid = r.surcharge_applied ? (r.base_price + autoSurcharge) : r.base_price;
+              surchargeChanged = true;
+            }
+          }
+
+          // Atualiza elementos DOM ao vivo para este aluguel
+          this.updateLiveRentalDom(this.joinRental(r), now);
+        }
+
+        if (surchargeChanged) {
+          DB.save();
+        }
+      },
+
+      updateLiveRentalDom(rental, now) {
+        const isOverdue = TimeUtils.isFinishedOrOverdue(rental.planned_end_time, now);
+        const progress = TimeUtils.calculateProgress(rental.start_time, rental.planned_end_time, now);
+        const pctStr = `${Math.round(progress * 100)}%`;
+        const statusLabel = TimeUtils.statusTimeLabel(rental.planned_end_time, now);
+        const color = isOverdue ? 'var(--danger)' : rental.item_color_hex;
+
+        // Cards na lista
+        document.querySelectorAll(`[data-rental-card="${rental.id}"]`).forEach(card => {
+          card.style.borderColor = color;
+          const badge = card.querySelector('[data-role="status-badge"]');
+          if (badge) {
+            badge.textContent = statusLabel;
+            badge.style.color = color;
+            badge.style.backgroundColor = isOverdue ? 'rgba(211,47,47,0.16)' : `${rental.item_color_hex}24`;
+          }
+          const bar = card.querySelector('[data-role="progress-fill"]');
+          if (bar) {
+            bar.style.width = isOverdue ? '100%' : `${(progress * 100).toFixed(1)}%`;
+            bar.style.backgroundColor = color;
+          }
+          const pct = card.querySelector('[data-role="progress-pct"]');
+          if (pct) {
+            pct.textContent = pctStr;
+            pct.style.color = color;
+          }
+          const totalEl = card.querySelector('[data-role="total-paid"]');
+          if (totalEl) totalEl.textContent = '💰 ' + Formatters.currency(rental.total_paid);
+
+          const surWrap = card.querySelector('[data-role="surcharge-banner"]');
+          if (surWrap) {
+            if (rental.surcharge > 0) {
+              surWrap.style.display = 'flex';
+              surWrap.querySelector('[data-role="surcharge-text"]').textContent =
+                `Acréscimo de atraso: ${Formatters.currency(rental.surcharge)} (${rental.surcharge_applied ? "Somado ao total" : "Pendente de adição"})`;
+            } else {
+              surWrap.style.display = 'none';
+            }
+          }
+        });
+
+        // Modal de Detalhes se estiver aberto para este aluguel
+        if (this.openRentalDetailId === rental.id) {
+          const modalStatus = document.getElementById('detail-live-status');
+          if (modalStatus) {
+            modalStatus.textContent = statusLabel;
+            modalStatus.style.color = color;
+          }
+          const modalPct = document.getElementById('detail-live-pct');
+          if (modalPct) {
+            modalPct.textContent = pctStr;
+            modalPct.style.color = color;
+          }
+          const modalBar = document.getElementById('detail-live-bar');
+          if (modalBar) {
+            modalBar.style.width = isOverdue ? '100%' : `${(progress * 100).toFixed(1)}%`;
+            modalBar.style.backgroundColor = color;
+          }
+          const modalDelayInfo = document.getElementById('detail-live-delay-info');
+          if (modalDelayInfo) {
+            if (isOverdue) {
+              const delayMins = TimeUtils.overdueMinutes(rental.planned_end_time, now);
+              modalDelayInfo.style.display = 'block';
+              modalDelayInfo.style.color = color;
+              modalDelayInfo.textContent = delayMins < TimeUtils.surchargeTriggerMinute
+                ? `Em período de tolerância (${delayMins}/${TimeUtils.toleranceMinutes} min). Acréscimo inicia no ${TimeUtils.surchargeTriggerMinute}º minuto.`
+                : `Atraso de ${delayMins} min • Cobrança de acréscimo ativa!`;
+            } else {
+              modalDelayInfo.style.display = 'none';
+            }
+          }
+          const surchargeInput = document.getElementById('detail-surcharge-input');
+          if (surchargeInput && document.activeElement !== surchargeInput) {
+            surchargeInput.value = (rental.surcharge || 0).toFixed(2).replace('.', ',');
+          }
+          const modalTotal = document.getElementById('detail-live-total');
+          if (modalTotal) modalTotal.textContent = Formatters.currency(rental.total_paid);
+          const completeBtn = document.getElementById('detail-complete-btn-label');
+          if (completeBtn) completeBtn.textContent = `Finalizar Aluguel (${Formatters.currency(rental.total_paid)})`;
+        }
+      },
+
+      setTab(idx) {
+        this.currentTab = idx;
+        this.renderAll();
+      },
+
+      renderAll() {
+        const activeCount = this.getActiveRentals().length;
+
+        // AppBar
+        document.getElementById('appbar-tab-title').textContent = this.tabTitles[this.currentTab];
+        const chip = document.getElementById('appbar-active-chip');
+        if (activeCount > 0) {
+          chip.style.display = 'inline-flex';
+          document.getElementById('appbar-active-count').textContent = `${activeCount} ativo(s)`;
+        } else {
+          chip.style.display = 'none';
+        }
+
+        this.renderNav(activeCount);
+        const main = document.getElementById('main-content');
+        if (this.currentTab === 0) main.innerHTML = this.renderDashboardView();
+        else if (this.currentTab === 1) main.innerHTML = this.renderRentalsView();
+        else if (this.currentTab === 2) main.innerHTML = this.renderCatalogView();
+        else if (this.currentTab === 3) main.innerHTML = this.renderFinancialView();
+        else if (this.currentTab === 4) main.innerHTML = this.renderSettingsView();
+      },
+
+      renderNav(activeCount) {
+        const tabs = [
+          { label: 'Painel', icon: '<path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>' },
+          { label: 'Aluguéis', icon: '<path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>', badge: activeCount },
+          { label: 'Catálogo', icon: '<path d="M15.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM5 12c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5s1.6-3.5 3.5-3.5 3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5zm5.8-10l2.4-2.4.8.8c1.3 1.3 3 2.1 5.1 2.1V9c-1.5 0-2.7-.6-3.6-1.5l-1.9-1.9c-.5-.4-1-.6-1.6-.6s-1.1.2-1.4.6L7.8 8.4c-.4.4-.6.9-.6 1.4 0 .6.2 1.1.6 1.4L11 14v5h2v-6.2l-2.2-2.3zM19 12c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5s1.6-3.5 3.5-3.5 3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5z"/>' },
+          { label: 'Financeiro', icon: '<path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>' },
+          { label: 'Configurações', icon: '<path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>' }
+        ];
+
+        const html = tabs.map((t, i) => `
+          <button class="nav-item ${this.currentTab === i ? 'active' : ''}" onclick="App.setTab(${i})">
+            <div class="nav-icon-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">${t.icon}</svg>
+              ${t.badge ? `<span class="nav-badge">${t.badge}</span>` : ''}
+            </div>
+            <span>${t.label}</span>
+          </button>
+        `).join('');
+
+        document.getElementById('bottom-nav').innerHTML = html;
+        document.getElementById('nav-rail').innerHTML = html;
+      },
+
+      renderAvatarHtml(itemName, photoPath, colorHex, itemType, size = 48) {
+        const contrast = Formatters.contrastingText(colorHex);
+        const safeName = this.escapeHtml(itemName).replace(/'/g, "\\'");
+        const safePhoto = photoPath ? this.escapeHtml(photoPath).replace(/'/g, "\\'") : '';
+        const hasPhoto = Boolean(photoPath && String(photoPath).trim());
+
+        return `
+          <div class="item-avatar" style="width:${size}px;height:${size}px;background:${colorHex};"
+               onclick="event.stopPropagation(); App.openImagePreviewModal('${safeName}', '${itemType}', '${colorHex}', '${safePhoto}')"
+               title="Toque para ampliar imagem de ${this.escapeHtml(itemName)}">
+            ${hasPhoto
+              ? `<img src="${this.escapeHtml(photoPath)}" alt="${this.escapeHtml(itemName)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                 <div style="display:none;align-items:center;justify-content:center;width:100%;height:100%;">${Icons.typeIcon(itemType, Math.round(size * 0.54), contrast)}</div>`
+              : Icons.typeIcon(itemType, Math.round(size * 0.54), contrast)
+            }
+            ${hasPhoto ? `<div class="zoom-Indicator">🔍</div>` : ''}
+          </div>
+        `;
+      },
+
+      renderRentalCardHtml(rental, now) {
+        const isOverdue = TimeUtils.isFinishedOrOverdue(rental.planned_end_time, now);
+        const progress = TimeUtils.calculateProgress(rental.start_time, rental.planned_end_time, now);
+        const pctStr = `${Math.round(progress * 100)}%`;
+        const statusLabel = TimeUtils.statusTimeLabel(rental.planned_end_time, now);
+        const barColor = isOverdue ? 'var(--danger)' : rental.item_color_hex;
+        const badgeBg = isOverdue ? 'rgba(211,47,47,0.16)' : `${rental.item_color_hex}24`;
+
+        return `
+          <div class="rental-card" data-rental-card="${rental.id}"
+               style="border: 2.2px solid ${barColor};"
+               onclick="App.openRentalDetailModal(${rental.id})">
+            <div style="display:flex;align-items:center;gap:13px;">
+              ${this.renderAvatarHtml(rental.item_name, rental.item_photo_path, rental.item_color_hex, rental.item_type, 52)}
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                  <div style="font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    ${this.escapeHtml(rental.item_name)}
+                  </div>
+                  <span data-role="status-badge" style="padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:800;white-space:nowrap;background:${badgeBg};color:${barColor};">
+                    ${statusLabel}
+                  </span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px;font-size:12.5px;color:var(--text-secondary);font-weight:600;">
+                  <span>▶ Início: ${Formatters.timeShort(rental.start_time)}</span>
+                  <span>⚑ Previsto: ${Formatters.timeShort(rental.planned_end_time)}</span>
+                  <span data-role="total-paid" style="${rental.surcharge_applied ? 'color:var(--primary-light);font-weight:800;' : ''}">
+                    💰 ${Formatters.currency(rental.total_paid)}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+              <div class="progress-track" style="background:${rental.item_color_hex}28;">
+                <div class="progress-fill" data-role="progress-fill" style="width:${isOverdue ? '100' : (progress * 100).toFixed(1)}%;background:${barColor};"></div>
+              </div>
+              <span data-role="progress-pct" style="font-size:12px;font-weight:800;color:${barColor};min-width:34px;text-align:right;">${pctStr}</span>
+            </div>
+            <div data-role="surcharge-banner" style="display:${rental.surcharge > 0 ? 'flex' : 'none'};align-items:center;gap:6px;margin-top:10px;padding:6px 10px;border-radius:8px;background:rgba(211,47,47,0.12);border:1px solid rgba(211,47,47,0.4);color:#EF5350;font-size:12px;font-weight:700;">
+              <span>⚠️</span>
+              <span data-role="surcharge-text">Acréscimo de atraso: ${Formatters.currency(rental.surcharge)} (${rental.surcharge_applied ? 'Somado ao total' : 'Pendente de adição'})</span>
+            </div>
+          </div>
+        `;
+      },
+
+      // --- ABA 0: PAINEL (DASHBOARD) ---
+      renderDashboardView() {
+        const now = new Date();
+        const activeItems = DB.data.items.filter(i => i.is_active === 1);
+        const busyIds = this.getBusyItemIds();
+        const availableCount = activeItems.filter(i => !busyIds.has(i.id)).length;
+        const activeRentals = this.getActiveRentals();
+        const fin = this.getFinancialSummary();
+
+        return `
+          <div class="banner-gradient">
+            <div class="banner-bolt">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/></svg>
+            </div>
+            <div>
+              <div style="font-size:19px;font-weight:800;">Painel Operacional AlugPlus+</div>
+              <div id="dashboard-live-clock" style="font-size:12.5px;opacity:0.88;margin-top:3px;">
+                Monitoramento em tempo real • ${Formatters.dateBr(now)} • ${Formatters.timeFull(now)}
+              </div>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:rgba(46,125,50,0.15);color:#4CAF50;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              </div>
+              <div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text-secondary);">Itens Disponíveis</div>
+                <div style="font-size:24px;font-weight:900;color:#4CAF50;margin:2px 0;">${availableCount}</div>
+                <div style="font-size:11.5px;color:var(--text-secondary);">de ${activeItems.length} ativos comigo</div>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:rgba(124,58,237,0.15);color:var(--primary-light);">
+                ${Icons.typeIcon('Bicicleta', 28, 'currentColor')}
+              </div>
+              <div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text-secondary);">Itens Alugados Agora</div>
+                <div style="font-size:24px;font-weight:900;color:var(--primary-light);margin:2px 0;">${activeRentals.length}</div>
+                <div style="font-size:11.5px;color:var(--text-secondary);">Em andamento no cronômetro</div>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:rgba(139,92,246,0.15);color:var(--primary-light);">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+              </div>
+              <div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text-secondary);">Faturamento Total do Dia</div>
+                <div style="font-size:23px;font-weight:900;color:var(--primary-light);margin:2px 0;">${Formatters.currency(fin.currentShiftRevenue)}</div>
+                <div style="font-size:11.5px;color:var(--text-secondary);">${fin.currentShiftRentalsCount} concluídos • Consolidado: ${Formatters.currency(fin.consolidatedDayRevenue)}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800;">
+              <span>⏱️</span>
+              <span>Aluguéis Ativos (${activeRentals.length})</span>
+            </div>
+            <button class="btn btn-tonal btn-sm" onclick="App.openNewRentalModal()">+ Lançar em Lote</button>
+          </div>
+
+          ${activeRentals.length === 0 ? `
+            <div class="card" style="text-align:center;padding:38px 20px;">
+              <div style="width:64px;height:64px;border-radius:50%;background:rgba(124,58,237,0.12);color:var(--primary-light);display:flex;align-items:center;justify-content:center;margin:0 auto 14px auto;">
+                ${Icons.typeIcon('Bicicleta', 36, 'currentColor')}
+              </div>
+              <div style="font-size:16px;font-weight:800;margin-bottom:6px;">Nenhum equipamento alugado neste instante</div>
+              <div style="font-size:13.5px;color:var(--text-secondary);">Toque em "+ Novo Aluguel" para selecionar 1 ou vários equipamentos e iniciar o cronômetro.</div>
+            </div>
+          ` : activeRentals.map(r => this.renderRentalCardHtml(r, now)).join('')}
+
+          <button class="fab" onclick="App.openNewRentalModal()">
+            <span>⚡</span>
+            <span>+ Novo Aluguel</span>
+          </button>
+        `;
+      },
+
+      // --- ABA 1: ALUGUÉIS (ATIVOS & HISTÓRICO + COPIAR WHATSAPP) ---
+      renderRentalsView() {
+        const now = new Date();
+        const activeRentals = this.getActiveRentals();
+        const completedRentals = this.getCompletedRentals();
+        const totalToCopy = activeRentals.length + completedRentals.length;
+
+        return `
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;">
+            <div>
+              <div style="font-size:21px;font-weight:800;">Controle de Aluguéis</div>
+              <div style="font-size:13px;color:var(--text-secondary);">Cronômetros ativos em tempo real e histórico recente (máx. 200 registros)</div>
+            </div>
+            <button class="btn btn-whatsapp" onclick="App.copyRentalsForWhatsApp()">
+              📋 ${totalToCopy > 0 ? `Copiar p/ WhatsApp (${totalToCopy})` : 'Copiar p/ WhatsApp'}
+            </button>
+          </div>
+
+          <div class="sub-tabs">
+            <button class="sub-tab ${this.rentalsSubTab === 0 ? 'active' : ''}" onclick="App.rentalsSubTab=0;App.renderAll()">
+              Ativos (${activeRentals.length})
+            </button>
+            <button class="sub-tab ${this.rentalsSubTab === 1 ? 'active' : ''}" onclick="App.rentalsSubTab=1;App.renderAll()">
+              Histórico (${completedRentals.length}/200)
+            </button>
+          </div>
+
+          ${this.rentalsSubTab === 0 ? (
+            activeRentals.length === 0 ? `
+              <div class="card" style="text-align:center;padding:44px 20px;">
+                <div style="font-size:42px;margin-bottom:10px;">⏲️</div>
+                <div style="font-size:16px;font-weight:700;margin-bottom:14px;">Nenhum aluguel ativo no momento.</div>
+                <button class="btn btn-primary" onclick="App.openNewRentalModal()">+ Novo Aluguel</button>
+              </div>
+            ` : activeRentals.map(r => this.renderRentalCardHtml(r, now)).join('')
+          ) : (
+            `
+              ${completedRentals.length > 0 ? `
+                <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">
+                  <span style="font-size:13px;color:var(--text-secondary);">Exibindo ${completedRentals.length} registro(s) recente(s)</span>
+                  <div style="display:flex;gap:8px;">
+                    <button class="btn btn-outline btn-sm" style="border-color:var(--whatsapp);color:var(--whatsapp-light);" onclick="App.copyRentalsForWhatsApp()">📋 Copiar Lista</button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="App.confirmClearHistory()">🗑️ Limpar Aba</button>
+                  </div>
+                </div>
+              ` : ''}
+              ${completedRentals.length === 0 ? `
+                <div class="card" style="text-align:center;padding:44px 20px;">
+                  <div style="font-size:42px;margin-bottom:10px;">📜</div>
+                  <div style="font-size:16px;font-weight:700;">Nenhum aluguel finalizado no histórico.</div>
+                </div>
+              ` : completedRentals.map(r => {
+                const endTime = r.actual_end_time || r.planned_end_time;
+                return `
+                  <div class="card" style="border:1.5px solid ${r.item_color_hex}66;display:flex;align-items:center;gap:12px;padding:12px 14px;">
+                    ${this.renderAvatarHtml(r.item_name, r.item_photo_path, r.item_color_hex, r.item_type, 46)}
+                    <div style="flex:1;min-width:0;">
+                      <div style="font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${this.escapeHtml(r.item_name)}</div>
+                      <div style="font-size:12.5px;color:var(--text-secondary);font-weight:600;margin-top:3px;">
+                        Saída: ${Formatters.timeShort(r.start_time)} • Chegada: ${Formatters.timeShort(endTime)}
+                      </div>
+                      ${r.surcharge_applied && r.surcharge > 0 ? `
+                        <div style="font-size:11px;color:var(--warning);font-weight:700;margin-top:2px;">
+                          Inclui acréscimo de +${Formatters.currency(r.surcharge)}
+                        </div>
+                      ` : ''}
+                    </div>
+                    <button class="btn btn-sm" style="background:rgba(46,125,50,0.15);border:1px solid rgba(46,125,50,0.4);color:#66BB6A;font-weight:900;"
+                            onclick="App.openChangePriceModal(${r.id}, true)">
+                      ${Formatters.currency(r.total_paid)} ✎
+                    </button>
+                    <button class="btn btn-sm" style="background:transparent;color:var(--danger);padding:6px;"
+                            title="Apagar aluguel do histórico e do financeiro"
+                            onclick="App.confirmDeleteHistoryRental(${r.id})">
+                      🗑️
+                    </button>
+                  </div>
+                `;
+              }).join('')}
+            `
+          )}
+
+          <button class="fab" onclick="App.openNewRentalModal()">
+            <span>+</span>
+            <span>Novo Aluguel</span>
+          </button>
+        `;
+      },
+
+      // --- ABA 2: CATÁLOGO DE EQUIPAMENTOS ---
+      renderCatalogView() {
+        const allItems = [...DB.data.items].sort((a, b) => (b.is_active - a.is_active) || a.name.localeCompare(b.name));
+        const activeItems = allItems.filter(i => i.is_active === 1);
+        const filtered = this.catalogFilter === 'activeOnly' ? activeItems : allItems;
+
+        return `
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;">
+            <div>
+              <div style="font-size:21px;font-weight:800;">Catálogo de Equipamentos</div>
+              <div style="font-size:13px;color:var(--text-secondary);">${activeItems.length} ativos comigo • ${allItems.length} cadastrados no total</div>
+            </div>
+            <div style="display:flex;gap:6px;background:var(--bg-card);padding:4px;border-radius:12px;border:1px solid var(--border-color);">
+              <button class="btn btn-sm ${this.catalogFilter === 'activeOnly' ? 'btn-primary' : ''}" style="${this.catalogFilter !== 'activeOnly' ? 'background:transparent;color:var(--text-secondary);' : ''}"
+                      onclick="App.catalogFilter='activeOnly';App.renderAll()">
+                ✓ Comigo / Ativos
+              </button>
+              <button class="btn btn-sm ${this.catalogFilter === 'all' ? 'btn-primary' : ''}" style="${this.catalogFilter !== 'all' ? 'background:transparent;color:var(--text-secondary);' : ''}"
+                      onclick="App.catalogFilter='all';App.renderAll()">
+                Todos (${allItems.length})
+              </button>
+            </div>
+          </div>
+
+          ${filtered.length === 0 ? `
+            <div class="card" style="text-align:center;padding:44px 20px;">
+              <div style="font-size:16px;font-weight:700;margin-bottom:12px;">Nenhum equipamento encontrado para este filtro.</div>
+              <button class="btn btn-primary" onclick="App.openItemFormModal()">+ Cadastrar Equipamento</button>
+            </div>
+          ` : `
+            <div class="catalog-grid">
+              ${filtered.map(item => {
+                const contrast = Formatters.contrastingText(item.color_hex);
+                return `
+                  <div class="card" style="padding:0;overflow:hidden;border:2px solid ${item.is_active ? item.color_hex + 'CC' : 'rgba(148,163,184,0.3)'};display:flex;flex-direction:column;">
+                    <div style="height:8px;background:${item.is_active ? item.color_hex : '#64748B'};"></div>
+                    <div style="padding:14px;display:flex;flex-direction:column;flex:1;gap:12px;">
+                      <div style="display:flex;align-items:center;gap:12px;">
+                        ${this.renderAvatarHtml(item.name, item.photo_path, item.color_hex, item.type, 54)}
+                        <div style="flex:1;min-width:0;">
+                          <div style="font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;${item.is_active ? '' : 'text-decoration:line-through;opacity:0.65;'}">
+                            ${this.escapeHtml(item.name)}
+                          </div>
+                          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">
+                            <span style="padding:3px 8px;border-radius:8px;font-size:11px;font-weight:700;background:${item.color_hex}26;color:${item.color_hex};border:1px solid ${item.color_hex}80;">
+                              ${item.type}
+                            </span>
+                            <span style="padding:3px 8px;border-radius:8px;font-size:10.5px;font-weight:800;background:${item.color_hex};color:${contrast};">
+                              ${item.color_hex.toUpperCase()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div style="border-top:1px solid var(--border-color);padding-top:10px;display:flex;align-items:center;justify-content:space-between;">
+                        <button class="btn btn-sm" style="background:transparent;padding:4px 6px;color:${item.is_active ? '#4CAF50' : '#94A3B8'};"
+                                onclick="App.toggleItemActive(${item.id})">
+                          ${item.is_active ? '● Comigo / Ativo' : '⏸ Inativo'}
+                        </button>
+                        <div style="display:flex;gap:4px;">
+                          <button class="btn btn-tonal btn-sm" onclick="App.openItemFormModal(${item.id})" title="Editar">✎ Editar</button>
+                          <button class="btn btn-outline-danger btn-sm" onclick="App.confirmDeleteItem(${item.id})" title="Excluir">🗑️</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
+
+          <button class="fab" onclick="App.openItemFormModal()">
+            <span>+</span>
+            <span>Novo Item</span>
+          </button>
+        `;
+      },
+
+      // --- ABA 3: FINANCEIRO & MÉTRICAS ---
+      renderFinancialView() {
+        const fin = this.getFinancialSummary();
+        const avgTicket = fin.currentShiftRentalsCount > 0
+          ? fin.currentShiftRevenue / fin.currentShiftRentalsCount
+          : 0.0;
+
+        const displayMetrics = fin.hourlyMetrics.length > 0
+          ? fin.hourlyMetrics
+          : [
+              { slot: '16-17', count: 0, revenue: 0 },
+              { slot: '17-18', count: 0, revenue: 0 },
+              { slot: '18-19', count: 0, revenue: 0 },
+              { slot: '19-20', count: 0, revenue: 0 },
+              { slot: '20-21', count: 0, revenue: 0 },
+              { slot: '21-22', count: 0, revenue: 0 }
+            ];
+        const maxCount = Math.max(5, ...displayMetrics.map(m => m.count + 1));
+
+        const catEntries = Object.entries(fin.categoryRanking).sort((a, b) => b[1] - a[1]);
+        const totalCatCount = catEntries.reduce((acc, e) => acc + e[1], 0);
+        const itemEntries = Object.entries(fin.itemRanking).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+        // Gera SVG Donut Chart para as categorias (idêntico ao PieChart do Flutter)
+        let donutSvg = '';
+        if (totalCatCount > 0) {
+          let cumulativePct = 0;
+          const circles = catEntries.map(([cat, count]) => {
+            const pct = (count / totalCatCount) * 100;
+            const col = cat === 'Bicicleta' ? '#1565C0' : (cat === 'Carrinho' ? '#E53935' : '#00ACC1');
+            const dashArray = `${pct} ${100 - pct}`;
+            const dashOffset = 25 - cumulativePct;
+            cumulativePct += pct;
+            return `<circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="${col}" stroke-width="7.5" stroke-dasharray="${dashArray}" stroke-dashoffset="${dashOffset}"></circle>`;
+          }).join('');
+          donutSvg = `
+            <div style="display:flex;justify-content:center;margin:10px 0 14px 0;">
+              <svg width="150" height="150" viewBox="0 0 42 42">
+                <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="rgba(148,163,184,0.12)" stroke-width="7.5"></circle>
+                ${circles}
+                <text x="21" y="22.5" text-anchor="middle" fill="currentColor" font-size="6" font-weight="800">${totalCatCount} loc.</text>
+              </svg>
+            </div>
+          `;
+        }
+
+        return `
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;">
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span style="font-size:21px;font-weight:800;">Gestão Financeira & Métricas</span>
+                <span style="padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;background:${fin.isDayClosed ? 'rgba(245,124,0,0.18)' : 'rgba(46,125,50,0.18)'};color:${fin.isDayClosed ? '#FFB74D' : '#66BB6A'};">
+                  ${fin.isDayClosed ? 'Expediente Consolidado' : 'Expediente Aberto'}
+                </span>
+              </div>
+              <div style="font-size:12.5px;color:var(--text-secondary);margin-top:4px;">
+                Data de referência: ${Formatters.sqlDateToBr(fin.todayDate)} • Isolamento de métricas ativo
+              </div>
+            </div>
+            <button class="btn btn-primary-dark" onclick="App.confirmResetAndCloseDay()">
+              🔒 Resetar / Fechar Dia
+            </button>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:rgba(124,58,237,0.15);color:var(--primary-light);">💰</div>
+              <div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text-secondary);">Faturamento do Expediente Atual</div>
+                <div style="font-size:23px;font-weight:900;color:var(--primary-light);margin:2px 0;">${Formatters.currency(fin.currentShiftRevenue)}</div>
+                <div style="font-size:11.5px;color:var(--text-secondary);">${fin.currentShiftRentalsCount} aluguéis finalizados neste turno</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:rgba(46,125,50,0.15);color:#4CAF50;">🏦</div>
+              <div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text-secondary);">Faturamento Consolidado do Dia</div>
+                <div style="font-size:23px;font-weight:900;color:#4CAF50;margin:2px 0;">${Formatters.currency(fin.consolidatedDayRevenue)}</div>
+                <div style="font-size:11.5px;color:var(--text-secondary);">Total acumulado no dia (${fin.consolidatedDayCount} locações)</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background:rgba(139,92,246,0.15);color:#C084FC;">📈</div>
+              <div>
+                <div style="font-size:12.5px;font-weight:600;color:var(--text-secondary);">Ticket Médio (Expediente)</div>
+                <div style="font-size:23px;font-weight:900;color:#C084FC;margin:2px 0;">${Formatters.currency(avgTicket)}</div>
+                <div style="font-size:11.5px;color:var(--text-secondary);">Média por locação concluída</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico de Barras por Faixa Horária -->
+          <div class="card" style="padding:18px;">
+            <div style="font-size:17px;font-weight:800;">📊 Aluguéis por Faixa Horária (h)</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Volume de locações e receita registrados em cada hora de operação</div>
+            <div class="bar-chart-wrap">
+              ${displayMetrics.map(m => {
+                const hPct = Math.min(100, Math.round((m.count / maxCount) * 100));
+                return `
+                  <div class="bar-col" title="${m.slot}h: ${m.count} aluguéis (${Formatters.currency(m.revenue)})">
+                    <div class="bar-val">${m.count > 0 ? `${m.count}x<br><span style="font-size:9.5px;opacity:0.8;">${Formatters.currency(m.revenue)}</span>` : '0'}</div>
+                    <div class="bar-track">
+                      <div class="bar-fill" style="height:${hPct}%;"></div>
+                    </div>
+                    <div class="bar-label">${m.slot}h</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Ranking de Categorias & Equipamentos -->
+          <div class="card" style="padding:18px;">
+            <div style="font-size:17px;font-weight:800;margin-bottom:12px;">🍕 Categorias & Ranking de Itens</div>
+            ${totalCatCount === 0 ? `
+              <div style="text-align:center;padding:24px 12px;color:var(--text-secondary);font-size:13.5px;">
+                Conclua aluguéis para visualizar a distribuição por categoria e o ranking de equipamentos.
+              </div>
+            ` : `
+              ${donutSvg}
+              <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+                ${catEntries.map(([cat, count]) => {
+                  const pct = Math.round((count / totalCatCount) * 100);
+                  const col = cat === 'Bicicleta' ? '#1565C0' : (cat === 'Carrinho' ? '#E53935' : '#00ACC1');
+                  return `
+                    <div style="flex:1;min-width:110px;background:${col}1F;border:1.5px solid ${col};border-radius:12px;padding:10px 12px;">
+                      <div style="font-size:12px;font-weight:700;color:var(--text-secondary);">${cat}</div>
+                      <div style="font-size:20px;font-weight:900;color:${col};">${pct}% <span style="font-size:13px;font-weight:700;">(${count}x)</span></div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              <div style="font-size:14px;font-weight:800;margin-bottom:8px;">Top Equipamentos Mais Alugados</div>
+              ${itemEntries.map(([name, count]) => `
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border-color);">
+                  <span style="font-size:13.5px;font-weight:600;">${this.escapeHtml(name)}</span>
+                  <span style="padding:2px 9px;border-radius:10px;background:rgba(124,58,237,0.18);color:var(--primary-light);font-size:12px;font-weight:800;">${count}x</span>
+                </div>
+              `).join('')}
+            `}
+          </div>
+
+          <!-- Histórico de Fechamentos Diários -->
+          <div class="card" style="padding:18px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">
+              <div style="font-size:16px;font-weight:800;">📜 Registro Isolado de Fechamentos Diários</div>
+              ${fin.historyDays.length > 0 ? `
+                <button class="btn btn-outline-danger btn-sm" onclick="App.confirmClearDailyFinancialStats()">Apagar Fechamentos</button>
+              ` : ''}
+            </div>
+            ${fin.historyDays.length === 0 ? `
+              <div style="color:var(--text-secondary);font-size:13.5px;padding:8px 0;">Nenhum registro diário consolidado até o momento.</div>
+            ` : fin.historyDays.map(rec => `
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-color);">
+                <div>
+                  <div style="font-weight:800;font-size:14.5px;">${Formatters.sqlDateToBr(rec.date)}</div>
+                  <div style="font-size:12px;color:var(--text-secondary);">
+                    ${rec.total_rentals_count} locações • Status: ${rec.is_closed ? 'Fechado / Consolidado' : 'Em andamento'}
+                  </div>
+                </div>
+                <div style="font-size:16px;font-weight:900;color:var(--primary-light);">${Formatters.currency(rec.total_revenue)}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      },
+
+      // --- ABA 4: CONFIGURAÇÕES ---
+      renderSettingsView() {
+        const s = DB.data.settings;
+        const cats = ['Bicicleta', 'Carrinho', 'Outro'];
+        const curMin = s.surchargeStartMinute || 4;
+        const tolMin = Math.max(0, curMin - 1);
+
+        return `
+          <div style="max-width:780px;margin:0 auto;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+              <div style="padding:10px;border-radius:12px;background:rgba(124,58,237,0.15);color:var(--primary-light);font-size:22px;">⚙️</div>
+              <div>
+                <div style="font-size:21px;font-weight:800;">Parâmetros Operacionais</div>
+                <div style="font-size:13px;color:var(--text-secondary);">Defina o valor base e o tempo padrão para preenchimento automático de novos aluguéis.</div>
+              </div>
+            </div>
+
+            ${cats.map(cat => {
+              const p = s.presets[cat] || { defaultPrice: 15, defaultMinutes: 30 };
+              return `
+                <div class="card" style="padding:18px;">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                    <div style="width:38px;height:38px;border-radius:50%;background:rgba(124,58,237,0.15);color:var(--primary-light);display:flex;align-items:center;justify-content:center;">
+                      ${Icons.typeIcon(cat, 22, 'currentColor')}
+                    </div>
+                    <div style="font-size:17px;font-weight:800;">Categoria: ${cat}</div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group" style="margin:0;">
+                      <label class="form-label">Preço Padrão (R$)</label>
+                      <input type="text" inputmode="decimal" class="form-input" id="set-price-${cat}" value="${p.defaultPrice.toFixed(2).replace('.', ',')}" />
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                      <label class="form-label">Tempo Padrão (minutos)</label>
+                      <input type="number" inputmode="numeric" class="form-input" id="set-mins-${cat}" value="${p.defaultMinutes}" />
+                    </div>
+                  </div>
+                  <div class="chip-row" style="margin-top:10px;">
+                    <button class="chip" onclick="document.getElementById('set-mins-${cat}').value=15">🕒 15 min</button>
+                    <button class="chip" onclick="document.getElementById('set-mins-${cat}').value=30">🕒 30 min</button>
+                    <button class="chip" onclick="document.getElementById('set-mins-${cat}').value=60">🕒 60 min (1h)</button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+
+            <!-- Tempo até Começar a Contar o Acréscimo -->
+            <div class="card" style="padding:18px;border:1.5px solid rgba(245,124,0,0.45);">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <div style="width:38px;height:38px;border-radius:50%;background:rgba(245,124,0,0.18);color:var(--warning);display:flex;align-items:center;justify-content:center;font-size:18px;">⏱️</div>
+                <div>
+                  <div style="font-size:16.5px;font-weight:800;">Tempo até Começar a Contar o Acréscimo</div>
+                  <div style="font-size:12px;color:var(--text-secondary);">Escolha em qual minuto de atraso começa a adicionar R$ 1,00.</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <button class="btn btn-tonal" onclick="App.changeSurchargeSetting(${curMin - 1})">−</button>
+                <input type="number" inputmode="numeric" class="form-input" id="set-surcharge-min" style="text-align:center;font-size:18px;font-weight:800;" value="${curMin}"
+                       onchange="App.changeSurchargeSetting(this.value)" />
+                <button class="btn btn-tonal" onclick="App.changeSurchargeSetting(${curMin + 1})">+</button>
+              </div>
+              <div class="chip-row" style="margin-bottom:12px;">
+                ${[1, 2, 3, 4, 5, 6, 10].map(m => `
+                  <button class="chip ${curMin === m ? 'selected' : ''}" onclick="App.changeSurchargeSetting(${m})">
+                    ${m === 4 ? '4 min (Padrão)' : `${m} min`}
+                  </button>
+                `).join('')}
+              </div>
+              <div style="padding:12px;border-radius:12px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);font-size:12.5px;font-weight:600;">
+                ℹ️ ${tolMin === 0
+                  ? 'Regra Ativa: Sem tolerância. Ao atingir 1 minuto de atraso, adiciona-se R$ 1,00 + R$ 1,00 por minuto completo adicional.'
+                  : `Regra Ativa: Tolerância de ${tolMin} minuto(s) após o término previsto. A partir do ${curMin}º minuto de atraso, adiciona-se R$ 1,00 + R$ 1,00 por minuto completo adicional.`
+                }
+              </div>
+            </div>
+
+            <!-- Modo Noturno e Alertas Sonoros -->
+            <div class="card" style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-weight:800;font-size:15px;">🌙 Modo Noturno (#0F172A)</div>
+                <div style="font-size:12px;color:var(--text-secondary);">Alterna entre superfície clara (#F8FAFC) e tema escuro de alto contraste</div>
+              </div>
+              <input type="checkbox" style="width:22px;height:22px;accent-color:var(--primary);" ${s.darkMode ? 'checked' : ''}
+                     onchange="DB.data.settings.darkMode=this.checked;DB.applyTheme();DB.save();App.renderAll();" />
+            </div>
+
+            <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <div>
+                <div style="font-weight:800;font-size:15px;">🔔 Alerta Sonoro no iPhone / Safari</div>
+                <div style="font-size:12px;color:var(--text-secondary);">Toca aviso sonoro quando o tempo esgota ou inicia cobrança de acréscimo</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <button class="btn btn-tonal btn-sm" onclick="SoundAlert.playAlert('finished')">🔊 Testar</button>
+                <input type="checkbox" style="width:22px;height:22px;accent-color:var(--primary);" ${s.soundEnabled ? 'checked' : ''}
+                       onchange="DB.data.settings.soundEnabled=this.checked;DB.save();" />
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-block" style="margin:16px 0 24px 0;" onclick="App.savePresetsFromSettings()">
+              💾 Salvar Configurações Padrão
+            </button>
+
+            <!-- Persistência e Backup para iPhone -->
+            <div class="card" style="border:1.5px solid rgba(124,58,237,0.4);">
+              <div style="font-size:16px;font-weight:800;margin-bottom:6px;">📲 Salvar / Backup de Dados no iPhone</div>
+              <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:14px;">
+                Os dados ficam salvos automaticamente no navegador. Você também pode salvar uma cópia atualizada do próprio aplicativo (.html) com todos os cadastros e aluguéis gravados dentro dele.
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="App.downloadUpdatedHtmlFile()">
+                  💾 Salvar App Atualizado (.html)
+                </button>
+                <button class="btn btn-tonal" onclick="App.exportJsonBackup()">
+                  📤 Exportar JSON
+                </button>
+                <button class="btn btn-outline" onclick="document.getElementById('hidden-backup-picker').click()">
+                  📥 Importar Backup
+                </button>
+              </div>
+            </div>
+
+            <!-- Zona de Manutenção -->
+            <div class="card" style="background:rgba(211,47,47,0.08);border:1.5px solid rgba(211,47,47,0.35);margin-top:20px;">
+              <div style="font-size:16px;font-weight:800;color:var(--danger);margin-bottom:6px;">⚠️ Zona de Manutenção • Zerar Aplicativo</div>
+              <div style="font-size:12.5px;margin-bottom:14px;">
+                Apaga todos os aluguéis ativos e histórico, zera o faturamento diário e restaura o catálogo inicial de fábrica.
+              </div>
+              <button class="btn btn-outline-danger btn-block" onclick="App.confirmResetEntireApp()">
+                🗑️ Zerar Todo o App (Restaurar de Fábrica)
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // --- AÇÕES DE CONFIGURAÇÕES ---
+      changeSurchargeSetting(val) {
+        const sanitized = Math.min(120, Math.max(1, parseInt(val, 10) || 4));
+        DB.data.settings.surchargeStartMinute = sanitized;
+        TimeUtils.surchargeTriggerMinute = sanitized;
+        DB.save();
+        this.renderAll();
+      },
+
+      savePresetsFromSettings() {
+        const cats = ['Bicicleta', 'Carrinho', 'Outro'];
+        for (const cat of cats) {
+          const priceEl = document.getElementById(`set-price-${cat}`);
+          const minsEl = document.getElementById(`set-mins-${cat}`);
+          const price = Math.max(0, Formatters.parseCurrency(priceEl ? priceEl.value : '15', 15));
+          const mins = Math.max(1, parseInt(minsEl ? minsEl.value : '30', 10) || 30);
+          DB.data.settings.presets[cat] = { category: cat, defaultPrice: price, defaultMinutes: mins };
+        }
+        const surEl = document.getElementById('set-surcharge-min');
+        if (surEl) {
+          const sMin = Math.min(120, Math.max(1, parseInt(surEl.value, 10) || 4));
+          DB.data.settings.surchargeStartMinute = sMin;
+          TimeUtils.surchargeTriggerMinute = sMin;
+        }
+        DB.save();
+        this.renderAll();
+        this.showToast('Configurações padrão e regra de acréscimo salvas com sucesso!', 'success');
+      },
+
+      // --- MODAL: NOVO ALUGUEL (INDIVIDUAL OU EM LOTE) ---
+      openNewRentalModal() {
+        const activeItems = DB.data.items
+          .filter(i => i.is_active === 1)
+          .sort((a, b) => a.name.localeCompare(b.name));
+        const busyIds = this.getBusyItemIds();
+        const bikePreset = DB.data.settings.presets['Bicicleta'] || { defaultMinutes: 30, defaultPrice: 15.0 };
+
+        this.newRentalSelectedIds = new Set();
+
+        const modalHtml = `
+          <div class="modal-backdrop" onclick="if(event.target===this)App.closeModal()">
+            <div class="modal-sheet">
+              <div class="modal-body">
+                <div style="width:44px;height:5px;background:rgba(148,163,184,0.35);border-radius:10px;margin:0 auto 14px auto;"></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                  <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="bolt-badge" style="width:42px;height:42px;">⚡</div>
+                    <div>
+                      <div style="font-size:17.5px;font-weight:800;">+ Novo Aluguel (Individual ou Lote)</div>
+                      <div id="new-rental-sel-count" style="font-size:12.5px;color:var(--text-secondary);">0 equipamento(s) selecionado(s)</div>
+                    </div>
+                  </div>
+                  <button class="btn btn-sm btn-outline" onclick="App.closeModal()">✕</button>
+                </div>
+
+                <hr style="border:none;border-top:1px solid var(--border-color);margin:14px 0;" />
+
+                <div style="font-size:13.5px;font-weight:700;margin-bottom:10px;">Selecione um ou mais equipamentos disponíveis:</div>
+
+                <div style="max-height:280px;overflow-y:auto;margin-bottom:14px;padding-right:2px;">
+                  ${activeItems.length === 0 ? `
+                    <div style="text-align:center;padding:20px;color:var(--text-secondary);">
+                      Nenhum item ativo no catálogo. Cadastre ou ative itens na aba Catálogo.
+                    </div>
+                  ` : activeItems.map(item => {
+                    const isBusy = busyIds.has(item.id);
+                    const preset = DB.data.settings.presets[item.type] || bikePreset;
+                    return `
+                      <div class="card" id="new-rental-item-card-${item.id}"
+                           style="margin-bottom:8px;padding:10px 12px;display:flex;align-items:center;gap:12px;border:1.5px solid ${item.color_hex}66;opacity:${isBusy ? '0.5' : '1'};cursor:${isBusy ? 'not-allowed' : 'pointer'};"
+                           onclick="${isBusy ? '' : `App.toggleNewRentalItem(${item.id}, '${item.type}')`}">
+                        ${this.renderAvatarHtml(item.name, item.photo_path, item.color_hex, item.type, 44)}
+                        <div style="flex:1;min-width:0;">
+                          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                            <span style="font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${this.escapeHtml(item.name)}</span>
+                            ${isBusy ? `<span style="padding:2px 8px;border-radius:10px;background:rgba(245,124,0,0.2);color:var(--warning);font-size:11px;font-weight:800;">Alugado agora</span>` : ''}
+                          </div>
+                          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">
+                            ${item.type} • Padrão: ${preset.defaultMinutes} min / ${Formatters.currency(preset.defaultPrice)}
+                          </div>
+                        </div>
+                        <input type="checkbox" id="new-rental-chk-${item.id}" ${isBusy ? 'disabled' : ''}
+                               style="width:20px;height:20px;accent-color:var(--primary);pointer-events:none;" />
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+
+                <div style="font-size:13.5px;font-weight:700;margin-bottom:8px;">Tempo e Valor por Equipamento (Atalhos Rápidos):</div>
+                <div class="chip-row" style="margin-bottom:14px;">
+                  <button class="chip" onclick="App.adjustNewRentalMinutes(15)">⏰ +15 min</button>
+                  <button class="chip" onclick="App.adjustNewRentalMinutes(30)">⏰ +30 min</button>
+                  <button class="chip" onclick="App.adjustNewRentalMinutes(60)">⏰ +1h</button>
+                  <button class="chip" onclick="document.getElementById('new-rental-mins').value=15">Fixar 15m</button>
+                  <button class="chip" onclick="document.getElementById('new-rental-mins').value=30">Fixar 30m</button>
+                  <button class="chip" onclick="document.getElementById('new-rental-mins').value=60">Fixar 1h</button>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+                  <div>
+                    <label class="form-label">Tempo (minutos)</label>
+                    <input type="number" inputmode="numeric" class="form-input" id="new-rental-mins" value="${bikePreset.defaultMinutes}" />
+                  </div>
+                  <div>
+                    <label class="form-label">Valor Unitário (R$)</label>
+                    <input type="text" inputmode="decimal" class="form-input" id="new-rental-price" value="${bikePreset.defaultPrice.toFixed(2).replace('.', ',')}" />
+                  </div>
+                </div>
+
+                <button class="btn btn-primary btn-block" id="new-rental-submit-btn" onclick="App.submitBatchRentals()">
+                  ▶ Iniciar Aluguel
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal-root').innerHTML = modalHtml;
+      },
+
+      toggleNewRentalItem(itemId, itemType) {
+        const wasEmpty = this.newRentalSelectedIds.size === 0;
+        if (this.newRentalSelectedIds.has(itemId)) {
+          this.newRentalSelectedIds.delete(itemId);
+        } else {
+          this.newRentalSelectedIds.add(itemId);
+          if (wasEmpty) {
+            const preset = DB.data.settings.presets[itemType] || DB.data.settings.presets['Bicicleta'];
+            if (preset) {
+              document.getElementById('new-rental-mins').value = preset.defaultMinutes;
+              document.getElementById('new-rental-price').value = preset.defaultPrice.toFixed(2).replace('.', ',');
+            }
+          }
+        }
+        const isSel = this.newRentalSelectedIds.has(itemId);
+        const chk = document.getElementById(`new-rental-chk-${itemId}`);
+        const card = document.getElementById(`new-rental-item-card-${itemId}`);
+        if (chk) chk.checked = isSel;
+        if (card) card.style.borderColor = isSel ? 'var(--primary)' : '';
+        const count = this.newRentalSelectedIds.size;
+        document.getElementById('new-rental-sel-count').textContent = `${count} equipamento(s) selecionado(s)`;
+        document.getElementById('new-rental-submit-btn').textContent =
+          count === 0 ? '▶ Iniciar Aluguel' : (count > 1 ? `▶ Iniciar ${count} Aluguéis` : '▶ Iniciar Aluguel deste item');
+      },
+
+      adjustNewRentalMinutes(delta) {
+        const el = document.getElementById('new-rental-mins');
+        const cur = parseInt(el.value, 10) || 0;
+        el.value = Math.min(1440, Math.max(1, cur + delta));
+      },
+
+      submitBatchRentals() {
+        if (!this.newRentalSelectedIds || this.newRentalSelectedIds.size === 0) {
+          this.showToast('Selecione pelo menos 1 equipamento para alugar.', 'warning');
+          return;
+        }
+        const mins = Math.max(1, parseInt(document.getElementById('new-rental-mins').value, 10) || 30);
+        const price = Math.max(0, Formatters.parseCurrency(document.getElementById('new-rental-price').value, 15.0));
+        const now = new Date();
+        const plannedEnd = new Date(now.getTime() + mins * 60000);
+        const createdDate = Formatters.sqlDate(now);
+        const busyIds = this.getBusyItemIds();
+
+        const ids = Array.from(this.newRentalSelectedIds);
+        for (const itemId of ids) {
+          if (busyIds.has(itemId)) {
+            this.showToast(`O equipamento ID ${itemId} já está em um aluguel ativo.`, 'danger');
+            return;
+          }
+          DB.data.rentals.push({
+            id: DB.data.nextRentalId++,
+            item_id: itemId,
+            start_time: now.toISOString(),
+            planned_end_time: plannedEnd.toISOString(),
+            actual_end_time: null,
+            base_price: price,
+            surcharge: 0.0,
+            surcharge_applied: 0,
+            is_manual_surcharge: 0,
+            total_paid: price,
+            status: 'active',
+            created_date: createdDate
+          });
+        }
+
+        DB.save();
+        this.closeModal();
+        this.renderAll();
+        this.showToast(ids.length === 1 ? 'Aluguel iniciado com sucesso!' : `${ids.length} aluguéis iniciados em lote com sucesso!`, 'success');
+      },
+
+      // --- MODAL: DETALHES E AÇÕES DO ALUGUEL ATIVO (RentalDetailView) ---
+      openRentalDetailModal(rentalId) {
+        const raw = DB.data.rentals.find(r => r.id === rentalId && r.status === 'active');
+        if (!raw) return;
+        this.openRentalDetailId = rentalId;
+        const rental = this.joinRental(raw);
+        const now = new Date();
+        const isOverdue = TimeUtils.isFinishedOrOverdue(rental.planned_end_time, now);
+        const progress = TimeUtils.calculateProgress(rental.start_time, rental.planned_end_time, now);
+        const delayMins = TimeUtils.overdueMinutes(rental.planned_end_time, now);
+        const barColor = isOverdue ? 'var(--danger)' : rental.item_color_hex;
+        const statusText = TimeUtils.statusTimeLabel(rental.planned_end_time, now);
+
+        const modalHtml = `
+          <div class="modal-backdrop" onclick="if(event.target===this)App.closeModal()">
+            <div class="modal-sheet">
+              <div class="modal-body">
+                <div style="width:44px;height:5px;background:rgba(148,163,184,0.35);border-radius:10px;margin:0 auto 14px auto;"></div>
+                <div style="display:flex;align-items:center;gap:14px;">
+                  ${this.renderAvatarHtml(rental.item_name, rental.item_photo_path, rental.item_color_hex, rental.item_type, 58)}
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:19px;font-weight:800;">${this.escapeHtml(rental.item_name)}</div>
+                    <div style="font-size:12.5px;color:var(--text-secondary);margin-top:3px;">
+                      Categoria: ${rental.item_type} • Início: ${Formatters.timeFull(rental.start_time)} • Previsto: ${Formatters.timeFull(rental.planned_end_time)}
+                    </div>
+                  </div>
+                  <button class="btn btn-sm btn-outline" onclick="App.closeModal()">✕</button>
+                </div>
+
+                <!-- Cronômetro em Tempo Real -->
+                <div style="margin-top:16px;padding:15px;border-radius:16px;background:${barColor}15;border:1.5px solid ${barColor}66;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                    <span id="detail-live-status" style="font-size:18px;font-weight:800;color:${barColor};">${statusText}</span>
+                    <span id="detail-live-pct" style="font-size:16px;font-weight:800;color:${barColor};">${Math.round(progress * 100)}%</span>
+                  </div>
+                  <div class="progress-track" style="height:12px;background:${barColor}33;">
+                    <div class="progress-fill" id="detail-live-bar" style="width:${isOverdue ? '100' : (progress * 100).toFixed(1)}%;background:${barColor};"></div>
+                  </div>
+                  <div id="detail-live-delay-info" style="display:${isOverdue ? 'block' : 'none'};margin-top:8px;font-size:12px;font-weight:700;color:${barColor};">
+                    ${delayMins < TimeUtils.surchargeTriggerMinute
+                      ? `Em período de tolerância (${delayMins}/${TimeUtils.toleranceMinutes} min). Acréscimo inicia no ${TimeUtils.surchargeTriggerMinute}º minuto.`
+                      : `Atraso de ${delayMins} min • Cobrança de acréscimo ativa!`}
+                  </div>
+                </div>
+
+                <!-- Valores e Acréscimo -->
+                <div class="card" style="margin-top:14px;border:1.5px solid ${rental.surcharge > 0 ? 'rgba(245,124,0,0.6)' : 'var(--border-color)'};">
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <div>
+                      <div style="font-size:12px;color:var(--text-secondary);">Valor Base</div>
+                      <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+                        <span style="font-size:18px;font-weight:800;">${Formatters.currency(rental.base_price)}</span>
+                        <button class="btn btn-tonal btn-sm" onclick="App.openChangePriceModal(${rental.id}, false)">✎ Editar</button>
+                      </div>
+                    </div>
+                    <div style="text-align:right;">
+                      <div style="font-size:12px;color:var(--text-secondary);">Total a Pagar</div>
+                      <div id="detail-live-total" style="font-size:22px;font-weight:900;color:var(--primary-light);">${Formatters.currency(rental.total_paid)}</div>
+                    </div>
+                  </div>
+
+                  <hr style="border:none;border-top:1px solid var(--border-color);margin:14px 0;" />
+
+                  <div style="font-size:13px;font-weight:700;margin-bottom:8px;">Acréscimo por Atraso (Editável pelo Operador)</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <input type="text" inputmode="decimal" class="form-input" id="detail-surcharge-input"
+                           value="${(rental.surcharge || 0).toFixed(2).replace('.', ',')}"
+                           oninput="App.onManualSurchargeInput(${rental.id}, this.value)" />
+                    <button class="btn ${rental.surcharge_applied ? 'btn-success' : 'btn-warning'}"
+                            onclick="App.toggleApplySurcharge(${rental.id})">
+                      ${rental.surcharge_applied ? '✓ Acréscimo Somado' : '+ Adicionar Acréscimo ao Valor'}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Editar Tempo Restante (Calculadora Didática) -->
+                <div class="card" style="margin-top:14px;border:1.5px solid rgba(124,58,237,0.35);">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                    <span style="font-size:14px;font-weight:800;">📅 Editar Tempo Restante (Adicionar / Diminuir)</span>
+                    <span id="detail-time-eval-badge" style="display:none;padding:2px 8px;border-radius:8px;font-size:12px;font-weight:800;"></span>
+                  </div>
+                  <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">
+                    Escreva o tempo para adicionar, use "-" para diminuir, ou faça cálculos (ex: 10+20+5 ou -15+5):
+                  </div>
+                  <div style="display:flex;gap:10px;margin-bottom:10px;">
+                    <input type="text" class="form-input" id="detail-time-expr" placeholder="Ex: 15, -10, 10+20+5"
+                           oninput="App.onTimeExprInput(this.value)" />
+                    <button class="btn btn-primary" onclick="App.applyTimeAdjustment(${rental.id})">Aplicar</button>
+                  </div>
+                  <div class="chip-row">
+                    <button class="chip" onclick="App.appendTimeToken('5')">+5 min</button>
+                    <button class="chip" onclick="App.appendTimeToken('10')">+10 min</button>
+                    <button class="chip" onclick="App.appendTimeToken('15')">+15 min</button>
+                    <button class="chip" onclick="App.appendTimeToken('30')">+30 min</button>
+                    <button class="chip danger" onclick="App.appendTimeToken('-5')">-5 min</button>
+                    <button class="chip danger" onclick="App.appendTimeToken('-10')">-10 min</button>
+                    <button class="chip danger" onclick="App.appendTimeToken('-15')">-15 min</button>
+                    <button class="chip" onclick="document.getElementById('detail-time-expr').value='10+20+5';App.onTimeExprInput('10+20+5')">+10+20+5</button>
+                  </div>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div style="font-size:13.5px;font-weight:800;margin:14px 0 8px 0;">Ações Rápidas do Aluguel</div>
+                <div class="chip-row" style="margin-bottom:20px;">
+                  <button class="btn btn-outline btn-sm" onclick="App.adjustRentalTime(${rental.id}, 10)">⏱️ +10 min</button>
+                  <button class="btn btn-outline btn-sm" onclick="App.adjustRentalTime(${rental.id}, 15)">⏱️ +15 min</button>
+                  <button class="btn btn-tonal btn-sm" onclick="App.openChangeItemModal(${rental.id})">⇄ Modificar Item</button>
+                  <button class="btn btn-tonal btn-sm" onclick="App.openChangePriceModal(${rental.id}, false)">💲 Modificar Valor</button>
+                  <button class="btn btn-outline-danger btn-sm" onclick="App.confirmDeleteActiveRental(${rental.id})">🗑️ Excluir Aluguel</button>
+                </div>
+
+                <button class="btn btn-success btn-block" onclick="App.completeRental(${rental.id})">
+                  ✓ <span id="detail-complete-btn-label">Finalizar Aluguel (${Formatters.currency(rental.total_paid)})</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal-root').innerHTML = modalHtml;
+      },
+
+      onManualSurchargeInput(rentalId, valStr) {
+        const r = DB.data.rentals.find(x => x.id === rentalId && x.status === 'active');
+        if (!r) return;
+        const parsed = Math.max(0, Formatters.parseCurrency(valStr, r.surcharge || 0));
+        this.manuallyEditedSurchargeIds.add(rentalId);
+        r.surcharge = parsed;
+        r.is_manual_surcharge = 1;
+        r.total_paid = r.surcharge_applied ? (r.base_price + parsed) : r.base_price;
+        DB.save();
+        const totalEl = document.getElementById('detail-live-total');
+        if (totalEl) totalEl.textContent = Formatters.currency(r.total_paid);
+        const completeBtn = document.getElementById('detail-complete-btn-label');
+        if (completeBtn) completeBtn.textContent = `Finalizar Aluguel (${Formatters.currency(r.total_paid)})`;
+      },
+
+      toggleApplySurcharge(rentalId) {
+        const r = DB.data.rentals.find(x => x.id === rentalId && x.status === 'active');
+        if (!r) return;
+        const inputEl = document.getElementById('detail-surcharge-input');
+        const customSurcharge = inputEl ? Math.max(0, Formatters.parseCurrency(inputEl.value, r.surcharge)) : r.surcharge;
+        r.surcharge = customSurcharge;
+        r.surcharge_applied = r.surcharge_applied ? 0 : 1;
+        r.is_manual_surcharge = 1;
+        r.total_paid = r.surcharge_applied ? (r.base_price + customSurcharge) : r.base_price;
+        this.manuallyEditedSurchargeIds.add(rentalId);
+        DB.save();
+        this.openRentalDetailModal(rentalId);
+        this.renderAll();
+      },
+
+      onTimeExprInput(val) {
+        const evaluated = TimeUtils.evaluateMinutesExpression(val);
+        const badge = document.getElementById('detail-time-eval-badge');
+        if (!badge) return;
+        if (evaluated === null) {
+          badge.style.display = 'none';
+        } else {
+          badge.style.display = 'inline-block';
+          badge.textContent = evaluated >= 0 ? `+${evaluated} min` : `${evaluated} min`;
+          badge.style.background = evaluated >= 0 ? 'rgba(124,58,237,0.2)' : 'rgba(211,47,47,0.2)';
+          badge.style.color = evaluated >= 0 ? 'var(--primary-light)' : '#EF5350';
+        }
+      },
+
+      appendTimeToken(token) {
+        const input = document.getElementById('detail-time-expr');
+        if (!input) return;
+        const cur = input.value.trim();
+        if (!cur) input.value = token;
+        else if (token.startsWith('-') || token.startsWith('+')) input.value = `${cur}${token}`;
+        else input.value = `${cur}+${token}`;
+        this.onTimeExprInput(input.value);
+      },
+
+      applyTimeAdjustment(rentalId) {
+        const input = document.getElementById('detail-time-expr');
+        const evaluated = TimeUtils.evaluateMinutesExpression(input ? input.value : '');
+        if (evaluated === null || evaluated === 0) {
+          this.showToast('Informe uma quantidade de minutos válida (ex: 15, -10 ou 10+20+5).', 'warning');
+          return;
+        }
+        this.adjustRentalTime(rentalId, evaluated);
+      },
+
+      adjustRentalTime(rentalId, deltaMinutes) {
+        const r = DB.data.rentals.find(x => x.id === rentalId && x.status === 'active');
+        if (!r || !deltaMinutes) return;
+        const startMs = new Date(r.start_time).getTime();
+        let newEndMs = new Date(r.planned_end_time).getTime() + deltaMinutes * 60000;
+        if (newEndMs < startMs + 60000) newEndMs = startMs + 60000;
+
+        const now = new Date();
+        if (now.getTime() < newEndMs) {
+          this.notifiedFinishedIds.delete(rentalId);
+          this.notifiedSurchargeIds.delete(rentalId);
+        }
+        this.manuallyEditedSurchargeIds.delete(rentalId);
+        r.planned_end_time = new Date(newEndMs).toISOString();
+        r.is_manual_surcharge = 0;
+        r.surcharge = TimeUtils.calculateSurcharge(r.planned_end_time, now);
+        r.total_paid = r.surcharge_applied ? (r.base_price + r.surcharge) : r.base_price;
+
+        DB.save();
+        this.openRentalDetailModal(rentalId);
+        this.renderAll();
+        this.showToast(
+          deltaMinutes > 0
+            ? `Tempo estendido em +${deltaMinutes} minuto(s) com sucesso!`
+            : `Tempo reduzido em ${deltaMinutes} minuto(s) com sucesso!`,
+          deltaMinutes > 0 ? 'success' : 'warning'
+        );
+      },
+
+      completeRental(rentalId) {
+        const r = DB.data.rentals.find(x => x.id === rentalId && x.status === 'active');
+        if (!r) return;
+        const joined = this.joinRental(r);
+        const now = new Date();
+        const inputEl = document.getElementById('detail-surcharge-input');
+        const effSurcharge = inputEl ? Math.max(0, Formatters.parseCurrency(inputEl.value, r.surcharge)) : r.surcharge;
+        const finalTotalPaid = r.surcharge_applied ? (r.base_price + effSurcharge) : r.base_price;
+
+        r.actual_end_time = now.toISOString();
+        r.surcharge = effSurcharge;
+        r.total_paid = finalTotalPaid;
+        r.status = 'completed';
+
+        DB.recordRentalInFinancialStats(
+          DB.todayDateKey,
+          r.start_time,
+          finalTotalPaid,
+          joined.item_type,
+          joined.item_name
+        );
+        DB.enforceRetentionLimit();
+        DB.save();
+
+        this.notifiedFinishedIds.delete(rentalId);
+        this.notifiedSurchargeIds.delete(rentalId);
+        this.manuallyEditedSurchargeIds.delete(rentalId);
+
+        this.closeModal();
+        this.renderAll();
+        this.showToast(`Aluguel de "${joined.item_name}" finalizado com sucesso!`, 'success');
+      },
+
+      // --- MODAL: MODIFICAR EQUIPAMENTO (CustomChangeItemModal) ---
+      openChangeItemModal(rentalId, filterCat = 'Todos', chosenId = null) {
+        const r = DB.data.rentals.find(x => x.id === rentalId && x.status === 'active');
+        if (!r) return;
+        const rental = this.joinRental(r);
+        const selId = chosenId !== null ? chosenId : rental.item_id;
+        const activeItems = DB.data.items.filter(i => i.is_active === 1);
+        const filtered = filterCat === 'Todos' ? activeItems : activeItems.filter(i => i.type === filterCat);
+        const busyIds = this.getBusyItemIds();
+        const selItem = this.getItemById(selId) || { name: rental.item_name, color_hex: rental.item_color_hex, type: rental.item_type, photo_path: rental.item_photo_path };
+
+        const modalHtml = `
+          <div class="modal-backdrop center-modal" onclick="if(event.target===this)App.openRentalDetailModal(${rentalId})">
+            <div class="modal-sheet" style="border:2px solid ${selItem.color_hex};">
+              <div style="padding:16px 20px;background:linear-gradient(135deg, var(--primary-dark), ${selItem.color_hex});color:#FFF;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-size:18px;font-weight:800;">⇄ Modificar Equipamento</div>
+                  <div style="font-size:12px;opacity:0.85;">Toque na foto para ampliar ou no card para selecionar</div>
+                </div>
+                <button class="btn btn-sm" style="background:rgba(0,0,0,0.25);color:#FFF;" onclick="App.openRentalDetailModal(${rentalId})">✕</button>
+              </div>
+              <div class="modal-body">
+                <!-- Comparativo Atual -> Novo -->
+                <div class="card" style="display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid ${selItem.color_hex}66;">
+                  <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;">
+                    ${this.renderAvatarHtml(rental.item_name, rental.item_photo_path, rental.item_color_hex, rental.item_type, 38)}
+                    <div style="min-width:0;">
+                      <div style="font-size:10px;font-weight:800;color:var(--text-secondary);">ATUAL</div>
+                      <div style="font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${this.escapeHtml(rental.item_name)}</div>
+                    </div>
+                  </div>
+                  <div style="font-weight:900;color:var(--primary-light);">➔</div>
+                  <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;">
+                    ${this.renderAvatarHtml(selItem.name, selItem.photo_path, selItem.color_hex, selItem.type, 38)}
+                    <div style="min-width:0;">
+                      <div style="font-size:10px;font-weight:800;color:${selId === rental.item_id ? 'var(--text-secondary)' : '#4CAF50'};">
+                        ${selId === rental.item_id ? 'MANTIDO' : 'NOVO ESCOLHIDO'}
+                      </div>
+                      <div style="font-size:12.5px;font-weight:800;color:${selItem.color_hex};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${this.escapeHtml(selItem.name)}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="chip-row" style="margin-bottom:12px;">
+                  ${['Todos', 'Bicicleta', 'Carrinho', 'Outro'].map(cat => `
+                    <button class="chip ${filterCat === cat ? 'selected' : ''}"
+                            onclick="App.openChangeItemModal(${rentalId}, '${cat}', ${selId})">${cat}</button>
+                  `).join('')}
+                </div>
+
+                <div style="max-height:260px;overflow-y:auto;margin-bottom:14px;">
+                  ${filtered.map(item => {
+                    const isCurrent = item.id === rental.item_id;
+                    const isBusyOther = busyIds.has(item.id) && !isCurrent;
+                    const isSelected = item.id === selId;
+                    return `
+                      <div class="card" style="padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;opacity:${isBusyOther ? '0.45' : '1'};border:${isSelected ? '2.4px' : '1.2px'} solid ${item.color_hex};cursor:${isBusyOther ? 'not-allowed' : 'pointer'};"
+                           onclick="${isBusyOther ? '' : `App.openChangeItemModal(${rentalId}, '${filterCat}', ${item.id})`}">
+                        ${this.renderAvatarHtml(item.name, item.photo_path, item.color_hex, item.type, 44)}
+                        <div style="flex:1;min-width:0;">
+                          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                            <span style="font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${this.escapeHtml(item.name)}</span>
+                            <span style="font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:6px;background:rgba(124,58,237,0.15);">
+                              ${isCurrent ? 'Item Atual' : (isBusyOther ? 'Em uso' : 'Livre')}
+                            </span>
+                          </div>
+                          <div style="font-size:11.5px;color:${item.color_hex};font-weight:700;margin-top:3px;">
+                            ${item.type} • ${item.color_hex.toUpperCase()}
+                          </div>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;gap:10px;">
+                  <button class="btn btn-outline" onclick="App.openRentalDetailModal(${rentalId})">Cancelar</button>
+                  <button class="btn btn-primary" onclick="App.confirmChangeRentalItem(${rentalId}, ${selId})">✓ Confirmar Equipamento</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal-root').innerHTML = modalHtml;
+      },
+
+      confirmChangeRentalItem(rentalId, newItemId) {
+        const r = DB.data.rentals.find(x => x.id === rentalId && x.status === 'active');
+        if (!r) return;
+        if (r.item_id !== newItemId) {
+          const busyOther = DB.data.rentals.some(x => x.status === 'active' && x.item_id === newItemId && x.id !== rentalId);
+          if (busyOther) {
+            this.showToast('O equipamento selecionado já está ocupado por outro aluguel ativo.', 'danger');
+            return;
+          }
+          r.item_id = newItemId;
+          DB.save();
+          const newItem = this.getItemById(newItemId);
+          this.showToast(`Equipamento alterado para "${newItem ? newItem.name : 'novo item'}"!`, 'success');
+        }
+        this.openRentalDetailModal(rentalId);
+        this.renderAll();
+      },
+
+      // --- MODAL: MODIFICAR VALOR (CustomChangePriceModal — Ativo ou Histórico) ---
+      openChangePriceModal(rentalId, isHistory = false) {
+        const r = DB.data.rentals.find(x => x.id === rentalId);
+        if (!r) return;
+        const rental = this.joinRental(r);
+        const initialPrice = isHistory ? rental.total_paid : rental.base_price;
+        this.priceModalState = { rentalId, isHistory, initialPrice, previewPrice: initialPrice };
+
+        const endTime = rental.actual_end_time || rental.planned_end_time;
+        const modalHtml = `
+          <div class="modal-backdrop center-modal" onclick="if(event.target===this){${isHistory ? 'App.closeModal()' : `App.openRentalDetailModal(${rentalId})`}}">
+            <div class="modal-sheet" style="border:2px solid ${rental.item_color_hex};">
+              <div style="padding:16px 20px;background:linear-gradient(135deg, var(--primary-dark), ${rental.item_color_hex});color:#FFF;display:flex;align-items:center;gap:12px;">
+                ${this.renderAvatarHtml(rental.item_name, rental.item_photo_path, rental.item_color_hex, rental.item_type, 46)}
+                <div style="flex:1;min-width:0;">
+                  <span style="font-size:10px;font-weight:800;background:rgba(255,255,255,0.2);padding:2px 7px;border-radius:6px;">
+                    ${isHistory ? 'ALUGUEL RECENTE • HISTÓRICO' : 'ALUGUEL EM ANDAMENTO'}
+                  </span>
+                  <div style="font-size:17px;font-weight:800;margin-top:3px;">
+                    ${isHistory ? 'Modificar Valor Pago' : 'Modificar Valor do Aluguel'}
+                  </div>
+                  <div style="font-size:12px;opacity:0.88;">
+                    ${this.escapeHtml(rental.item_name)} • ${Formatters.timeShort(rental.start_time)} às ${Formatters.timeShort(endTime)}
+                  </div>
+                </div>
+              </div>
+              <div class="modal-body">
+                <div class="card" style="display:flex;align-items:center;justify-content:space-between;background:rgba(124,58,237,0.08);border:1.5px solid rgba(124,58,237,0.35);">
+                  <div>
+                    <div style="font-size:11.5px;color:var(--text-secondary);font-weight:600;">Valor Anterior</div>
+                    <div style="font-size:17px;font-weight:700;">${Formatters.currency(initialPrice)}</div>
+                  </div>
+                  <span id="price-modal-diff" style="padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800;background:rgba(148,163,184,0.18);">Igual</span>
+                  <div style="text-align:right;">
+                    <div style="font-size:11.5px;color:var(--text-secondary);font-weight:600;">Novo Valor</div>
+                    <div id="price-modal-new" style="font-size:23px;font-weight:900;color:#4CAF50;">${Formatters.currency(initialPrice)}</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                  <button class="btn btn-tonal" onclick="App.adjustPriceModalDelta(-1)">− R$ 1</button>
+                  <input type="text" inputmode="decimal" class="form-input" id="price-modal-input"
+                         style="text-align:center;font-size:20px;font-weight:800;"
+                         value="${initialPrice.toFixed(2).replace('.', ',')}"
+                         oninput="App.onPriceModalInput(this.value)" />
+                  <button class="btn btn-tonal" onclick="App.adjustPriceModalDelta(1)">+ R$ 1</button>
+                </div>
+
+                <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;">Ajustes Rápidos (+ / -):</div>
+                <div class="chip-row" style="margin-bottom:14px;">
+                  <button class="chip danger" onclick="App.adjustPriceModalDelta(-5)">-R$ 5</button>
+                  <button class="chip danger" onclick="App.adjustPriceModalDelta(-2)">-R$ 2</button>
+                  <button class="chip success" onclick="App.adjustPriceModalDelta(2)">+R$ 2</button>
+                  <button class="chip success" onclick="App.adjustPriceModalDelta(5)">+R$ 5</button>
+                  <button class="chip success" onclick="App.adjustPriceModalDelta(10)">+R$ 10</button>
+                </div>
+
+                <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;">Valores Prontos (1 toque):</div>
+                <div class="chip-row" style="margin-bottom:16px;">
+                  ${[10, 15, 20, 25, 30, 40, 50].map(v => `
+                    <button class="chip" onclick="App.setPriceModalExact(${v})">R$ ${v}</button>
+                  `).join('')}
+                </div>
+
+                ${isHistory ? `
+                  <div style="padding:10px;border-radius:10px;background:rgba(124,58,237,0.1);font-size:11.5px;font-weight:600;margin-bottom:14px;">
+                    🔄 Ao salvar, o novo valor também será atualizado automaticamente na aba Financeiro.
+                  </div>
+                ` : ''}
+
+                <div style="display:flex;justify-content:flex-end;gap:10px;">
+                  <button class="btn btn-outline" onclick="${isHistory ? 'App.closeModal()' : `App.openRentalDetailModal(${rentalId})`}">Cancelar</button>
+                  <button class="btn btn-success" onclick="App.savePriceModal()">✓ Salvar Novo Valor</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal-root').innerHTML = modalHtml;
+      },
+
+      onPriceModalInput(valStr) {
+        if (!this.priceModalState) return;
+        const parsed = Math.max(0, Formatters.parseCurrency(valStr, 0));
+        this.priceModalState.previewPrice = parsed;
+        const diff = parsed - this.priceModalState.initialPrice;
+        document.getElementById('price-modal-new').textContent = Formatters.currency(parsed);
+        const diffEl = document.getElementById('price-modal-diff');
+        if (Math.abs(diff) < 0.01) {
+          diffEl.textContent = 'Igual';
+          diffEl.style.color = 'var(--text-secondary)';
+        } else if (diff > 0) {
+          diffEl.textContent = `+${Formatters.currency(diff)}`;
+          diffEl.style.color = '#4CAF50';
+        } else {
+          diffEl.textContent = `-${Formatters.currency(Math.abs(diff))}`;
+          diffEl.style.color = 'var(--warning)';
+        }
+      },
+
+      adjustPriceModalDelta(delta) {
+        const input = document.getElementById('price-modal-input');
+        const cur = Formatters.parseCurrency(input.value, this.priceModalState.previewPrice);
+        this.setPriceModalExact(Math.max(0, cur + delta));
+      },
+
+      setPriceModalExact(val) {
+        const input = document.getElementById('price-modal-input');
+        input.value = val.toFixed(2).replace('.', ',');
+        this.onPriceModalInput(input.value);
+      },
+
+      savePriceModal() {
+        const st = this.priceModalState;
+        if (!st) return;
+        const r = DB.data.rentals.find(x => x.id === st.rentalId);
+        if (!r) return;
+        const newPrice = Math.max(0, st.previewPrice);
+
+        if (st.isHistory) {
+          const oldTotal = r.total_paid;
+          if (Math.abs(newPrice - oldTotal) > 0.001) {
+            r.base_price = r.surcharge_applied ? Math.max(0, newPrice - (r.surcharge || 0)) : newPrice;
+            r.total_paid = newPrice;
+            const primaryDateKey = r.actual_end_time ? Formatters.sqlDate(r.actual_end_time) : (r.created_date || DB.todayDateKey);
+            const fallbackDateKey = r.created_date || DB.todayDateKey;
+            DB.adjustRentalRevenueInFinancialStats(primaryDateKey, fallbackDateKey, r.start_time, oldTotal, newPrice);
+            DB.save();
+            const joined = this.joinRental(r);
+            this.showToast(`Valor de "${joined.item_name}" atualizado para ${Formatters.currency(newPrice)} (Histórico e Financeiro)!`, 'success');
+          }
+          this.closeModal();
+          this.renderAll();
+        } else {
+          r.base_price = newPrice;
+          r.total_paid = r.surcharge_applied ? (newPrice + (r.surcharge || 0)) : newPrice;
+          DB.save();
+          this.showToast(`Valor base atualizado para ${Formatters.currency(newPrice)}!`, 'success');
+          this.openRentalDetailModal(st.rentalId);
+          this.renderAll();
+        }
+      },
+
+      // --- COPIAR PARA WHATSAPP ---
+      copyRentalsForWhatsApp() {
+        const all = [...this.getCompletedRentals(), ...this.getActiveRentals()];
+        if (all.length === 0) {
+          this.showToast('Nenhum aluguel registrado no momento para copiar.', 'warning');
+          return;
+        }
+        all.sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+        const lines = all.map(r => {
+          const saida = Formatters.timeShort(r.start_time);
+          const chegada = Formatters.timeShort(r.actual_end_time || r.planned_end_time);
+          const valor = Formatters.currency(r.total_paid);
+          return `${r.item_name} - Saída: ${saida} | Chegada: ${chegada} | Total: ${valor}`;
+        });
+        const text = lines.join('\n');
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        }
+
+        const modalHtml = `
+          <div class="modal-backdrop center-modal" onclick="if(event.target===this)App.closeModal()">
+            <div class="modal-sheet">
+              <div style="padding:16px 20px;background:linear-gradient(135deg,#128C7E,#25D366);color:#FFF;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-size:17px;font-weight:800;">📋 Copiado para o WhatsApp!</div>
+                  <div style="font-size:12px;opacity:0.9;">${lines.length} linha(s) formatada(s)</div>
+                </div>
+                <button class="btn btn-sm" style="background:rgba(0,0,0,0.2);color:#FFF;" onclick="App.closeModal()">✕</button>
+              </div>
+              <div class="modal-body">
+                <textarea class="form-input selectable" id="whatsapp-copied-text" readonly rows="8"
+                          style="font-family:monospace;font-size:12.5px;line-height:1.5;margin-bottom:14px;">${this.escapeHtml(text)}</textarea>
+                <div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;">
+                  <button class="btn btn-outline" onclick="App.closeModal()">Fechar</button>
+                  <button class="btn btn-whatsapp" onclick="const t=document.getElementById('whatsapp-copied-text');t.select();document.execCommand('copy');App.showToast('Texto copiado!','success');">
+                    📋 Copiar Texto
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal-root').innerHTML = modalHtml;
+      },
+
+      // --- MODAL: CADASTRAR / EDITAR EQUIPAMENTO NO CATÁLOGO ---
+      openItemFormModal(itemId = null) {
+        const existing = itemId ? this.getItemById(itemId) : null;
+        this.itemFormState = {
+          id: existing ? existing.id : null,
+          name: existing ? existing.name : '',
+          type: existing ? existing.type : 'Bicicleta',
+          colorHex: existing ? existing.color_hex : ITEM_COLOR_PALETTE[0],
+          photoPath: existing ? (existing.photo_path || '') : '',
+          isActive: existing ? existing.is_active === 1 : true
+        };
+        this.renderItemFormModal();
+      },
+
+      renderItemFormModal() {
+        const st = this.itemFormState;
+        const isEditing = st.id !== null;
+        const contrast = Formatters.contrastingText(st.colorHex);
+
+        const modalHtml = `
+          <div class="modal-backdrop center-modal" onclick="if(event.target===this)App.closeModal()">
+            <div class="modal-sheet" style="max-width:560px;">
+              <div class="modal-body">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                  <div style="font-size:19px;font-weight:800;">
+                    ${isEditing ? 'Editar Equipamento' : 'Novo Equipamento no Catálogo'}
+                  </div>
+                  <button class="btn btn-sm btn-outline" onclick="App.closeModal()">✕</button>
+                </div>
+                <hr style="border:none;border-top:1px solid var(--border-color);margin-bottom:14px;" />
+
+                <div class="form-group">
+                  <label class="form-label">Nome / Identificação do Item *</label>
+                  <input type="text" class="form-input" id="item-form-name" placeholder="Ex: Bicicleta Aro 29 Azul #04"
+                         value="${this.escapeHtml(st.name)}" oninput="App.itemFormState.name=this.value" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Categoria *</label>
+                  <select class="form-select" id="item-form-type" onchange="App.itemFormState.type=this.value;App.renderItemFormModal()">
+                    <option value="Bicicleta" ${st.type === 'Bicicleta' ? 'selected' : ''}>Bicicleta</option>
+                    <option value="Carrinho" ${st.type === 'Carrinho' ? 'selected' : ''}>Carrinho</option>
+                    <option value="Outro" ${st.type === 'Outro' ? 'selected' : ''}>Outro</option>
+                  </select>
+                </div>
+
+                <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px 0;">
+                  <span style="font-size:13px;font-weight:700;">Cor do Equipamento (Paleta de 70 Cores)</span>
+                  <span style="padding:3px 10px;border-radius:8px;font-size:12px;font-weight:800;background:${st.colorHex};color:${contrast};">
+                    ${st.colorHex.toUpperCase()}
+                  </span>
+                </div>
+
+                <div class="color-grid" style="max-height:175px;overflow-y:auto;padding:4px;margin-bottom:14px;">
+                  ${ITEM_COLOR_PALETTE.map(hex => {
+                    const isSel = hex.toUpperCase() === st.colorHex.toUpperCase();
+                    return `
+                      <div class="color-swatch ${isSel ? 'selected' : ''}" style="background:${hex};color:${Formatters.contrastingText(hex)};"
+                           onclick="App.itemFormState.colorHex='${hex}';App.renderItemFormModal()">
+                        ${isSel ? '✓' : ''}
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Foto do Equipamento (Galeria/Câmera do iPhone ou URL)</label>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    ${this.renderAvatarHtml(st.name || 'Prévia', st.photoPath, st.colorHex, st.type, 50)}
+                    <input type="text" class="form-input" style="flex:1;" placeholder="Foto da galeria ou URL"
+                           value="${this.escapeHtml(st.photoPath)}"
+                           oninput="App.itemFormState.photoPath=this.value" />
+                    ${st.photoPath ? `<button class="btn btn-outline btn-sm" onclick="App.itemFormState.photoPath='';App.renderItemFormModal()">✕</button>` : ''}
+                    <button class="btn btn-tonal" onclick="App.triggerPhotoPicker()">📷 Galeria</button>
+                  </div>
+                </div>
+
+                <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:12px;margin:12px 0;">
+                  <div>
+                    <div style="font-weight:700;font-size:14px;">Disponível fisicamente comigo (Ativo)</div>
+                    <div style="font-size:11.5px;color:var(--text-secondary);">Itens ativos aparecem na seleção rápida de novo aluguel</div>
+                  </div>
+                  <input type="checkbox" style="width:20px;height:20px;accent-color:var(--primary);" ${st.isActive ? 'checked' : ''}
+                         onchange="App.itemFormState.isActive=this.checked" />
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;">
+                  <button class="btn btn-outline" onclick="App.closeModal()">Cancelar</button>
+                  <button class="btn btn-primary" onclick="App.submitItemForm()">
+                    ✓ ${isEditing ? 'Salvar Alterações' : 'Cadastrar Item'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal-root').innerHTML = modalHtml;
+      },
+
+      triggerPhotoPicker() {
+        const picker = document.getElementById('hidden-photo-picker');
+        picker.onchange = (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+              const maxDim = 720;
+              let w = img.width;
+              let h = img.height;
+              if (w > maxDim || h > maxDim) {
+                if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                else { w = Math.round((w * maxDim) / h); h = maxDim; }
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, w, h);
+              const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+              if (this.itemFormState) {
+                this.itemFormState.photoPath = dataUrl;
+                this.renderItemFormModal();
+              }
+            };
+            img.src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+          picker.value = '';
+        };
+        picker.click();
+      },
+
+      submitItemForm() {
+        const st = this.itemFormState;
+        if (!st) return;
+        const name = (st.name || '').trim();
+        if (!name) {
+          this.showToast('Informe o nome do equipamento.', 'warning');
+          return;
+        }
+        if (st.id === null) {
+          DB.data.items.push({
+            id: DB.data.nextItemId++,
+            name,
+            type: st.type,
+            color_hex: st.colorHex,
+            photo_path: st.photoPath.trim() || null,
+            is_active: st.isActive ? 1 : 0
+          });
+        } else {
+          const idx = DB.data.items.findIndex(i => i.id === st.id);
+          if (idx !== -1) {
+            DB.data.items[idx] = {
+              ...DB.data.items[idx],
+              name,
+              type: st.type,
+              color_hex: st.colorHex,
+              photo_path: st.photoPath.trim() || null,
+              is_active: st.isActive ? 1 : 0
+            };
+          }
+        }
+        DB.save();
+        this.closeModal();
+        this.renderAll();
+        this.showToast(st.id === null ? 'Equipamento cadastrado!' : 'Equipamento atualizado!', 'success');
+      },
+
+      toggleItemActive(itemId) {
+        const item = this.getItemById(itemId);
+        if (!item) return;
+        item.is_active = item.is_active === 1 ? 0 : 1;
+        DB.save();
+        this.renderAll();
+      },
+
+      // --- MODAL: ZOOM DE IMAGEM (ItemImagePreviewDialog) ---
+      openImagePreviewModal(itemName, itemType, colorHex, photoPath) {
+        const hasPhoto = Boolean(photoPath && String(photoPath).trim());
+        const contrast = Formatters.contrastingText(colorHex);
+        this.isImageZoomed = false;
+
+        const modalHtml = `
+          <div class="modal-backdrop center-modal" onclick="if(event.target===this)App.closeModal()">
+            <div class="modal-sheet" style="max-width:480px;border:2.5px solid ${colorHex};">
+              <div style="padding:14px 18px;background:linear-gradient(135deg,${colorHex},var(--primary-dark));color:#FFF;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                  <div style="font-size:16.5px;font-weight:800;">${this.escapeHtml(itemName)}</div>
+                  <div style="font-size:11.5px;opacity:0.9;">${itemType} • ${colorHex.toUpperCase()}</div>
+                </div>
+                <button class="btn btn-sm" style="background:rgba(0,0,0,0.25);color:#FFF;" onclick="App.closeModal()">✕</button>
+              </div>
+              <div style="background:#090D16;min-height:300px;max-height:420px;display:flex;align-items:center;justify-content:center;overflow:auto;position:relative;"
+                   ondblclick="App.togglePreviewZoom()">
+                ${hasPhoto ? `
+                  <img id="preview-zoom-img" src="${this.escapeHtml(photoPath)}" alt="${this.escapeHtml(itemName)}"
+                       style="max-width:100%;max-height:400px;object-fit:contain;transition:transform 0.2s ease;" />
+                  <button class="btn btn-sm" style="position:absolute;right:12px;bottom:12px;background:rgba(0,0,0,0.65);color:#FFF;"
+                          onclick="App.togglePreviewZoom()">🔍 Ampliar / Reduzir</button>
+                ` : `
+                  <div style="text-align:center;padding:32px;">
+                    <div style="width:120px;height:120px;border-radius:30px;background:${colorHex};display:flex;align-items:center;justify-content:center;margin:0 auto 14px auto;box-shadow:0 8px 24px ${colorHex}66;">
+                      ${Icons.typeIcon(itemType, 68, contrast)}
+                    </div>
+                    <div style="color:#FFF;font-weight:700;">${this.escapeHtml(itemName)}</div>
+                  </div>
+                `}
+              </div>
+              <div style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--bg-card);">
+                <span style="font-size:12px;color:var(--text-secondary);">
+                  ${hasPhoto ? 'Toque duplo ou no botão para aplicar zoom' : 'Equipamento com ícone padrão'}
+                </span>
+                <button class="btn btn-tonal btn-sm" onclick="App.closeModal()">Fechar</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal-root').innerHTML = modalHtml;
+      },
+
+      togglePreviewZoom() {
+        const img = document.getElementById('preview-zoom-img');
+        if (!img) return;
+        this.isImageZoomed = !this.isImageZoomed;
+        img.style.transform = this.isImageZoomed ? 'scale(2.2)' : 'scale(1)';
+      },
+
+      // --- CONFIRMAÇÕES E EXCLUSÕES ---
+      confirmDeleteItem(itemId) {
+        const item = this.getItemById(itemId);
+        if (!item) return;
+        const hasActive = DB.data.rentals.some(r => r.item_id === itemId && r.status === 'active');
+        if (hasActive) {
+          this.showToast('Não é possível excluir um equipamento com aluguel em andamento.', 'danger');
+          return;
+        }
+        if (!confirm(`Deseja remover "${item.name}" do catálogo?`)) return;
+        const hasPast = DB.data.rentals.some(r => r.item_id === itemId);
+        if (hasPast) {
+          item.is_active = 0;
+        } else {
+          DB.data.items = DB.data.items.filter(i => i.id !== itemId);
+        }
+        DB.save();
+        this.renderAll();
+      },
+
+      confirmDeleteActiveRental(rentalId) {
+        const r = DB.data.rentals.find(x => x.id === rentalId && x.status === 'active');
+        if (!r) return;
+        const joined = this.joinRental(r);
+        if (!confirm(`Deseja excluir o aluguel de "${joined.item_name}" sem contabilizá-lo no histórico?`)) return;
+        DB.data.rentals = DB.data.rentals.filter(x => x.id !== rentalId);
+        this.notifiedFinishedIds.delete(rentalId);
+        this.notifiedSurchargeIds.delete(rentalId);
+        this.manuallyEditedSurchargeIds.delete(rentalId);
+        DB.save();
+        this.closeModal();
+        this.renderAll();
+      },
+
+      confirmDeleteHistoryRental(rentalId) {
+        const r = DB.data.rentals.find(x => x.id === rentalId && x.status === 'completed');
+        if (!r) return;
+        const rental = this.joinRental(r);
+        const endTime = rental.actual_end_time || rental.planned_end_time;
+
+        const modalHtml = `
+          <div class="modal-backdrop center-modal" onclick="if(event.target===this)App.closeModal()">
+            <div class="modal-sheet" style="max-width:460px;">
+              <div style="padding:16px 20px;background:var(--danger);color:#FFF;font-size:17px;font-weight:800;">
+                🗑️ Apagar Aluguel e Rastro Financeiro?
+              </div>
+              <div class="modal-body">
+                <div class="card" style="display:flex;align-items:center;gap:12px;border:1.5px solid ${rental.item_color_hex}66;">
+                  ${this.renderAvatarHtml(rental.item_name, rental.item_photo_path, rental.item_color_hex, rental.item_type, 44)}
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-weight:800;">${this.escapeHtml(rental.item_name)}</div>
+                    <div style="font-size:12px;color:var(--text-secondary);">Saída: ${Formatters.timeShort(rental.start_time)} • Chegada: ${Formatters.timeShort(endTime)}</div>
+                  </div>
+                  <div style="font-weight:900;color:var(--danger);">${Formatters.currency(rental.total_paid)}</div>
+                </div>
+                <p style="font-size:13.5px;line-height:1.45;color:var(--text-secondary);">
+                  Esta ação removerá este aluguel do Histórico e também subtrairá seu valor e sua contagem da aba Financeiro, apagando todo o rastro de que ele existiu.
+                </p>
+                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+                  <button class="btn btn-outline" onclick="App.closeModal()">Cancelar</button>
+                  <button class="btn btn-danger" onclick="App.executeDeleteHistoryRental(${rental.id})">🗑️ Apagar Sem Deixar Rastro</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal-root').innerHTML = modalHtml;
+      },
+
+      executeDeleteHistoryRental(rentalId) {
+        const r = DB.data.rentals.find(x => x.id === rentalId && x.status === 'completed');
+        if (!r) return;
+        const rental = this.joinRental(r);
+        const primaryDateKey = r.actual_end_time ? Formatters.sqlDate(r.actual_end_time) : (r.created_date || DB.todayDateKey);
+        const fallbackDateKey = r.created_date || DB.todayDateKey;
+
+        DB.data.rentals = DB.data.rentals.filter(x => x.id !== rentalId);
+        DB.revertRentalFromFinancialStats(
+          primaryDateKey,
+          fallbackDateKey,
+          r.start_time,
+          r.actual_end_time || r.planned_end_time,
+          r.total_paid,
+          rental.item_type,
+          rental.item_name
+        );
+        DB.save();
+        this.closeModal();
+        this.renderAll();
+        this.showToast(`Aluguel de "${rental.item_name}" removido do histórico e do financeiro!`, 'danger');
+      },
+
+      confirmClearHistory() {
+        if (!confirm('Deseja remover todos os registros da aba Histórico? Os totais financeiros em Financeiro permanecerão preservados.')) return;
+        DB.data.rentals = DB.data.rentals.filter(r => r.status !== 'completed');
+        DB.save();
+        this.renderAll();
+        this.showToast('Histórico limpo com sucesso!', 'success');
+      },
+
+      confirmResetAndCloseDay() {
+        const fin = this.getFinancialSummary();
+        if (!confirm(`Consolidar e reiniciar expediente do dia?\n\nTurno Atual: ${fin.currentShiftRentalsCount} aluguéis (${Formatters.currency(fin.currentShiftRevenue)})\nTotal Consolidado: ${fin.consolidatedDayCount} aluguéis (${Formatters.currency(fin.consolidatedDayRevenue)})`)) return;
+        DB.closeAndResetDailyStats(DB.todayDateKey);
+        this.renderAll();
+        this.showToast('Expediente consolidado! Painel reiniciado para novo turno.', 'success');
+      },
+
+      confirmClearDailyFinancialStats() {
+        if (!confirm('Deseja apagar todos os registros de fechamentos diários?')) return;
+        DB.data.daily_financial_stats = {};
+        DB.save();
+        this.renderAll();
+        this.showToast('Todos os fechamentos diários foram apagados!', 'success');
+      },
+
+      confirmResetEntireApp() {
+        if (!confirm('ATENÇÃO: Isso apagará todos os aluguéis ativos, histórico, estatísticas financeiras e restaurará o catálogo de fábrica. Confirmar?')) return;
+        DB.resetEntireDatabase();
+        this.renderAll();
+        this.showToast('Aplicativo completamente zerado e restaurado de fábrica!', 'success');
+      },
+
+      // --- EXPORTAÇÃO E SALVAMENTO DO PRÓPRIO ARQUIVO HTML ATUALIZADO ---
+      async downloadUpdatedHtmlFile() {
+        this.closeModal();
+        document.getElementById('toast-root').innerHTML = '';
+        DB.save();
+
+        const fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        const fileName = 'AlugPlus_iPhone.html';
+        const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+
+        // Se o iPhone suportar compartilhamento nativo de arquivo (Salvar em Arquivos / WhatsApp)
+        try {
+          if (navigator.canShare && window.File) {
+            const file = new File([fullHtml], fileName, { type: 'text/html' });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: 'AlugPlus+ Atualizado',
+                files: [file]
+              });
+              this.showToast('Arquivo salvo/compartilhado com sucesso!', 'success');
+              return;
+            }
+          }
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 1500);
+        this.showToast('Arquivo AlugPlus_iPhone.html atualizado baixado!', 'success');
+      },
+
+      exportJsonBackup() {
+        DB.save();
+        const blob = new Blob([JSON.stringify(DB.data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `AlugPlus_Backup_${DB.todayDateKey}.json`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 1500);
+        this.showToast('Backup JSON exportado!', 'success');
+      },
+
+      closeModal() {
+        this.openRentalDetailId = null;
+        document.getElementById('modal-root').innerHTML = '';
+      },
+
+      showToast(msg, type = 'success', duration = 3200) {
+        const root = document.getElementById('toast-root');
+        const el = document.createElement('div');
+        el.className = 'toast';
+        const bg = type === 'success' ? '#2E7D32' : (type === 'warning' ? '#F57C00' : '#D32F2F');
+        el.style.backgroundColor = bg;
+        el.innerHTML = `<span>${this.escapeHtml(msg)}</span>`;
+        root.appendChild(el);
+        setTimeout(() => {
+          if (el.parentNode) el.parentNode.removeChild(el);
+        }, duration);
+      }
+    };
+
+    // Importador de Backup (.json ou .html anterior)
+    document.getElementById('hidden-backup-picker').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const text = String(ev.target.result || '');
+          let parsed = null;
+          if (text.trim().startsWith('{')) {
+            parsed = JSON.parse(text);
+          } else {
+            const match = text.match(/<script id="alugplus-embedded-db" type="application\/json">([\s\S]*?)<\/script>/);
+            if (match && match[1]) parsed = JSON.parse(match[1]);
+          }
+          if (parsed && parsed.items) {
+            DB.data = DB.migrate(parsed);
+            DB.save();
+            DB.applyTheme();
+            App.renderAll();
+            App.showToast('Backup importado e restaurado com sucesso!', 'success');
+          } else {
+            App.showToast('Arquivo de backup inválido.', 'danger');
+          }
+        } catch (err) {
+          App.showToast('Erro ao ler arquivo de backup.', 'danger');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', () => App.init());
+    } else {
+      App.init();
+    }
+  </script>
+</body>
+</html>

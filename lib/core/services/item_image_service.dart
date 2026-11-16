@@ -52,7 +52,7 @@ class ItemImageService {
   /// Retorna o caminho do arquivo original salvo no app.
   Future<String> saveImageToAppStorage(String sourcePath) async {
     final clean = sourcePath.trim();
-    if (clean.isEmpty || _isNetwork(clean)) return clean;
+    if (kIsWeb || clean.isEmpty || _isNetwork(clean)) return clean;
 
     try {
       final source = File(clean);
@@ -82,7 +82,7 @@ class ItemImageService {
 
   /// Gera (se necessário) a miniatura em disco e a coloca no cache RAM.
   Future<void> ensureThumbnail(String? originalPath) async {
-    if (originalPath == null) return;
+    if (kIsWeb || originalPath == null) return;
     final clean = originalPath.trim();
     if (clean.isEmpty || _isNetwork(clean)) return;
     if (_thumbCache.containsKey(clean)) return;
@@ -123,7 +123,7 @@ class ItemImageService {
 
   /// Bytes da MINIATURA (RAM). Nunca carrega a imagem original na memória.
   Uint8List? getBytesSync(String? filePath) {
-    if (filePath == null) return null;
+    if (kIsWeb || filePath == null) return null;
     final clean = filePath.trim();
     if (clean.isEmpty || _isNetwork(clean)) return null;
 
@@ -147,7 +147,7 @@ class ItemImageService {
 
   /// Arquivo original em tamanho completo (para a janela de zoom).
   File? originalFile(String? filePath) {
-    if (filePath == null) return null;
+    if (kIsWeb || filePath == null) return null;
     final clean = filePath.trim();
     if (clean.isEmpty || _isNetwork(clean)) return null;
     final f = File(clean);
