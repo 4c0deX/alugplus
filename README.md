@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="icons/Icon-192.png" alt="AlugPlus+ Logo" width="96" height="96" />
+<img src="icons/alugplus-icon.png" alt="AlugPlus+ Logo" width="96" height="96" />
 
 # AlugPlus+ • Web Deploy (`gh-pages`)
 
