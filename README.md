@@ -24,7 +24,7 @@
 
 Esta branch (`gh-pages`) contém **apenas os arquivos estáticos compilados** (`build/web`) para publicação direta no **GitHub Pages** em:
 
-> 🔗 **https://4c0dex.github.io/alugplus/**
+> 🔗 **https://eliasdiniz-sousa.github.io/alugplus/**
 
 O código-fonte Dart/Flutter do projeto fica nas branches de desenvolvimento (`Purple` / `main`).
 
